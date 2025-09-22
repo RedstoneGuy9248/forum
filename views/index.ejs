@@ -1,0 +1,56 @@
+<div id="posts"></div>
+<button onclick="previousPage()">Previous Page</button>
+<button onclick="nextPage()">Next Page</button>
+<p id="pagep">Current Page: </p>
+<script>
+    let l = 10;
+    let p = 1;
+    const pagep = document.querySelector("#pagep");
+    const getPosts = async (l = 10, p = 1) => {
+        try {
+            const response = await fetch(`/api/v1/posts?limit=${l}&page=${p}`);
+            const posts = await response.json();
+            if (posts.success) {return posts.data} else {throw err};
+        } catch(err) {console.log(err)};
+    };
+    const showPosts = async (l = 10, p = 1) => {
+        const postsDiv = document.querySelector("#posts");
+        const posts = await getPosts(l, p); //make func to, for each of the posts, append a child and fill its info using the array element.
+        postsDiv.replaceChildren();
+        posts
+        .map(element => {
+            let div = document.createElement("div");
+            div.classList.add("post");
+            let title = document.createElement("a"); let content = document.createElement("p"); let creator = document.createElement("a");
+            title.classList.add("title"); content.classList.add("content"); creator.classList.add("creator");
+            title.href = `/post/${element.id}`;
+            creator.href = `/user/${element.poster_id}`;
+            title.innerText = element.title;
+            creator.innerText = "Creator: " + element.display_name;
+            content.innerText = element.content.substring(0, 15) + `...`
+            let elements = [document.createElement("hr"), title, document.createElement("br"), creator, document.createElement("br"), content, document.createElement("hr")]
+            elements.forEach(element => {div.appendChild(element)});
+            return div;
+        })
+        .forEach(element => {
+            postsDiv.appendChild(element);
+        });
+    };
+    const updatePageP = () => {
+        pagep.innerText = "Current Page: " + p;
+    };
+    const nextPage = async () => {
+        p++;
+        await showPosts(10, p);
+        updatePageP();
+
+    };
+    const previousPage = async () => {
+        if (p <= 1) {return false};
+        p--;
+        await showPosts(10, p);
+        updatePageP();
+    };
+    showPosts();
+    updatePageP();
+</script>

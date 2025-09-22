@@ -9,9 +9,40 @@
     <nav>
         <div>
             <button id="home" onclick='window.location.href="/"'>Home</button>
-            <button id="post" onclick='window.location.href="/"'>Post</button>
-            <button id="profile" onclick='window.location.href="/"'>Profile</button>
+            <button id="post" onclick='window.location.href="/new-post"'>Post</button>
+            <button id="profile" onclick='window.location.href="/profile"'>Profile</button>
+            <button id="login" onclick='window.location.href="/login"'>Login</button>
+            <button id="signup" onclick='window.location.href="/signup"'>Signup</button>
+            <button id="logout">Logout</button>
         </div>
     </nav>
+    <script>
+        const buttons = document.querySelectorAll("button");
+        buttons.forEach(element => element.style.display = "none");
+        buttons[5].addEventListener("click", async () => {
+            let result = await fetch("/api/v1/logout", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            result = await result.json();
+            window.location.href = "/login"
+        });
+        const setNavbar = bool => {
+            Array.from(buttons).slice(0,3).forEach(element => element.style.display = "inline");
+            if (bool) {
+                buttons[5].style.display = "inline";
+            } else {
+                buttons[3].style.display = "inline";
+                buttons[4].style.display = "inline";
+            }
+        };
+        setNavbar(document.cookie == "authStatus=true");
+        
+    </script>
+    <%- body %>
 </body>
 </html>
+<!-- MAKE PROFILE AND POST PAGES-->

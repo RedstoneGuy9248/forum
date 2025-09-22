@@ -11,8 +11,26 @@ app.use(nocache());
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.use(express.static("./static"));
-app.get("", (req, res) => {
+app.get("/", (req, res) => {
     res.render('index');
+});
+app.get("/profile", (req, res) => {
+    res.render('profile');
+});
+app.get("/new-post", (req, res) => {
+    res.render('new-post');
+});
+app.get("/post", (req, res) => {
+    res.render('post');
+});
+app.get("/user", (req, res) => {
+    res.render('user');
+});
+app.get("/login", (req, res) => {
+    res.render('login');
+});
+app.get("/signup", (req, res) => {
+    res.render('signup');
 });
 app.use("/api/v1", routeApiV1);
 app.listen(5000, () => {console.log("http://localhost:5000");});

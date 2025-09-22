@@ -28,6 +28,11 @@ router.post("/login", checkIfInputsGiven, async (req, res) => {
                 secure: false,
                 path: "/",
                 maxAge: 1000 * 60 * 60 * 24 * 7
+            }).cookie("authStatus", true, {
+                httpOnly: false,
+                secure: false,
+                path: "/",
+                maxAge: 1000 * 60 * 60 * 24 * 7
             }).json({success: result.success, token: result.token});
         } else {return res.status(result.code).json({success: result.success, error: result.error});};
     };
@@ -40,8 +45,12 @@ router.get("/logout", async (req, res) => {
     res.clearCookie("token", {
         secure: false,
         path: "/"
-    }
-    );
+    });
+    res.clearCookie("authStatus", {
+        httpOnly: false,
+        secure: false,
+        path: "/"
+    });
     res.status(200).json({success: true});
 });
 

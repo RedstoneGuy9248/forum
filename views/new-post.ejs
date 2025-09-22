@@ -1,0 +1,31 @@
+<a href="/login">Unauthenticated. Log In </a>
+<form id="postForm">
+    <label for="title">Title</label><br>
+    <input type="text" id="title" name="title"><br>
+    <label for="content">Content</label><br>
+    <textarea type="text" id="content" name="content"></textarea><br>
+    <button type="submit" id="post-button">Post</button>
+</form>
+<script>
+    const p = document.querySelector("a");
+    p.style.display = "none";
+    const checkAuth = async () => {
+        try {
+            document.querySelector("#postForm").style.display = "none"
+            const response = await fetch("/api/v1/verifytoken", {
+                    method: "GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+            });
+            const authStatus = await response.json();
+            if (!authStatus.success) {p.style.display = "block"; return false}
+            document.querySelector("#postForm").style.display = "block";
+        } catch(err) {console.log(err)};
+    };
+    checkAuth();
+    document.querySelector("#post-button").addEventListener("click", () => {alert("havent coded this feature yet lol")});
+</script>
+<!-- textarea -->
+ 

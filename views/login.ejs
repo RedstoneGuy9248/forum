@@ -1,0 +1,36 @@
+<h3>Log In</h3>
+<form>
+    <label for="username">Username:</label><br>
+    <input id="username" type="text"><br>
+    <label for="password">Password:</label><br>
+    <input id="password" type="password"><br>
+    <button type="button" id="submit">Login</button>
+    <button type="reset">Reset values</button>
+</form>
+<p style="display: none;"></p>
+<script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    };
+    const button = document.querySelector("#submit");
+    const p = document.querySelector("p");
+    const username = document.querySelector("#username");
+    const password = document.querySelector("#password");
+    button.addEventListener("click", async () => {
+        let result = await fetch("/api/v1/login", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({username: username.value, password: password.value})
+        });
+        result = await result.json();
+        p.style.display = "block";
+        if (result.success) {
+            p.innerText = "Success! Redirecting to home in 3s...";
+            await sleep(3000);
+            window.location.href="/";
+        } else {p.innerText = result.error};
+    });
+</script>

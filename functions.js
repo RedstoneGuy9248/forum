@@ -61,11 +61,11 @@ const getPosts = async (limit, page, user) => {
     try {
         conn = await pool.getConnection();
         if (parseInt(user)) {
-            rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE B.id = ? ORDER BY ID LIMIT ? OFFSET ?;", [user, limit, offset]);
+            rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE B.id = ? ORDER BY ID DESC LIMIT ? OFFSET ?;", [user, limit, offset]);
         } else if (user) {
-            rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE B.username = ? ORDER BY ID LIMIT ? OFFSET ?;", [user, limit, offset]);
+            rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE B.username = ? ORDER BY ID DESC LIMIT ? OFFSET ?;", [user, limit, offset]);
         } else {
-            rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id ORDER BY ID LIMIT ? OFFSET ?;", [limit, offset]);
+            rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id ORDER BY ID DESC LIMIT ? OFFSET ?;", [limit, offset]);
         };
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "no data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
