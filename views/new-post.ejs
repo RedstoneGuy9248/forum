@@ -1,4 +1,3 @@
-<a href="/login">Unauthenticated. Log In </a>
 <div id="postForm">
     <label for="title">Title</label><br>
     <input type="text" id="title" name="title" maxlength="128"><br>
@@ -7,24 +6,7 @@
     <button id="post-button">Post</button>
 </div>
 <script>
-    const p = document.querySelector("a");
-    p.style.display = "none";
-    const checkAuth = async () => {
-        try {
-            document.querySelector("#postForm").style.display = "none"
-            const response = await fetch("/api/v1/verifytoken", {
-                    method: "GET",
-                    credentials: "same-origin",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-            });
-            const authStatus = await response.json();
-            if (!authStatus.success) {p.style.display = "block"; return false}
-            document.querySelector("#postForm").style.display = "block";
-        } catch(err) {console.log(err)};
-    };
-    checkAuth();
+    if (!(document.cookie == "authStatus=true")) {window.location.href = "/login"};
     document.querySelector("#post-button").addEventListener("click", async () => {
         const title = document.querySelector("#title").value;
         const content = document.querySelector("#content").value;
