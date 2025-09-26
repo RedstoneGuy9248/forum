@@ -1,10 +1,12 @@
 <u><h3 class="title"></h3></u>
 <a class="post-creator"></a>
 <p class="full-content"></p>
-<h3>Comments: </h3>
 <div id="newComment">
-    <!-- add comment posting ui here -->
+    <label for="comment">Comment: </label>
+    <input id="comment" name="comment" maxlength="512">
+    <button id="commentButton">Comment</button>
 </div>
+<h3>Comments: </h3>
 <div id="comments"></div>
 <button id="previousPage" onclick="previousPage()">Previous Page</button>
 <button id="nextPage" onclick="nextPage()">Next Page</button>
@@ -17,6 +19,25 @@
     const title = document.querySelector(".title");
     const postContent = document.querySelector(".full-content");
     const postCreator = document.querySelector(".post-creator");
+    document.querySelector("#newComment").style.display = document.cookie == "authStatus=true" ? "inline" : "none";
+    document.querySelector("#commentButton").addEventListener("click", async () => {
+        //data to send: post id, content
+        //id is in var id
+        // content to be taken as comment.value
+        const content = document.querySelector("#comment").value;
+        const response = await fetch("/api/v1/addcomment", {
+            method: "POST",
+            credentials: "same-origin",
+            body: JSON.stringify({post: id, content}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const result = await response.json()
+        if (result.success) {
+            window.location.href = `/post/${id}`
+        } else {alert("internal server error: try again later"); window.location.href = `/post/${id}`;}
+    });
     const getPost = async () => {
         const response = await fetch(`/api/v1/posts?id=${id}`);
         let post = await response.json();
@@ -31,7 +52,7 @@
         try {
             const response = await fetch(`/api/v1/comments?id=${id}&limit=${l}&page=${p}`);
             const comments = await response.json();
-            if (comments.success) {return comments.data} else {throw err};
+            if (comments.success) {return comments.data} else {throw "error"};
         } catch(err) {console.log(err)};
     };
     const showComments = async (l = 10, p = 1) => {
@@ -41,7 +62,6 @@
         const nextButton = document.querySelector("#nextPage");
         if (comments.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
         commentsDiv.replaceChildren();
-        console.log(comments);
         comments
         .map(element => {
             let div = document.createElement("div");

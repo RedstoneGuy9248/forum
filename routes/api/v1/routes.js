@@ -134,5 +134,15 @@ router.post("/addcomment", async (req, res) => {
     return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
 });
 
+router.put("/profile", async (req, res) => {
+    if (!req.body || !req.body.username || !req.body.display_name || !req.body.description) {return res.status(400).json({success: false, error: "specify edited content"});};
+    if (!req.cookies.token) {return res.status(401).json({success: false, error: "unauthenticated"});};
+    const token = req.cookies.token;
+    const { username, display_name, description } = req.body;
+    const tokenResult = await functions.verifyToken(token);
+    if (!tokenResult.success) {return res.status(tokenResult.code).json({success: false, error: tokenResult.error});};
+    const result = await functions.editUser(token, username, display_name, description);
+    return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
+});
 
 module.exports = router;

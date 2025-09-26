@@ -1,0 +1,50 @@
+<div id="profileDiv">
+    <label for="username">Username: </label>
+    <input class="profileDivField" id="username" name="username" maxlength="30" minlength="1" size="36">
+    <br>
+    <label for="display_name">Display Name: </label>
+    <input class="profileDivField" id="display_name" name="display_name" maxlength="128" minlength="1" size="134">
+    <br>
+    <label for="description">Description: </label>
+    <input class="profileDivField" id="description" name="description" maxlength="512" size="262">
+    <br>
+    <button id="update">Update</button>
+</div>
+<script>
+    const profileDiv = document.querySelector("#profileDiv");
+    const fields = Array.from(document.querySelectorAll(".profileDivField"));
+    profileDiv.style.display = "none";
+    const getUserInfo = async () => {
+        try {
+            const response = await fetch(`/api/v1/verifytoken`, {
+                method: "GET",
+                credentials: "same-origin"
+            });
+            const userInfo = await response.json();
+            if (userInfo.success) {return userInfo.data[0]} else {throw "error"};
+        } catch(err) {console.log(err)};
+    };
+    const fillUserInfo = async () => {
+        const userInfo = await getUserInfo();
+        fields[0].value = userInfo.username;
+        fields[1].value = userInfo.display_name;
+        fields[2].value = userInfo.description;
+        profileDiv.style.display = "inline";
+    };
+    document.querySelector("#update").addEventListener("click", async () => {
+        if (!fields.every(element => element.value)) {alert("don't leave any field empty"); return false};
+        const response = await fetch("/api/v1/profile", {
+            method: "PUT",
+            credentials: 'same-origin',
+            body: JSON.stringify({username: fields[0].value, display_name: fields[1].value, description: fields[2].value}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const result = await response.json();
+        if (result.success) {
+            window.location.href = `/profile`
+        } else {alert("internal server error: try again later"); window.location.href = "/profile";}
+    });
+    fillUserInfo();
+</script>

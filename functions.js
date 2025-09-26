@@ -25,10 +25,10 @@ const authenticate = async (username, password) => {
     try {
         conn = await pool.getConnection();
         const userExists = await conn.query("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?) AS FOUND;", [username]);
-        if (!userExists[0].FOUND) {return {success: false, code: 401, error: "username doesnt exist"};};
+        if (!userExists[0].FOUND) {return {success: false, code: 401, error: "either username or password wrong"};};
         const hash = await conn.query("SELECT password_hash FROM users WHERE username = ?", [username]);
         const result = await bcrypt.compare(password, hash[0].password_hash);
-        if (!result) {return {success: false, code: 401, error: "wrong password"};};
+        if (!result) {return {success: false, code: 401, error: "either username or password wrong"};};
         const token = crypto.randomBytes(64).toString("hex");
         await conn.query("INSERT INTO sessions (id, token) VALUES ((SELECT id FROM users WHERE username = ?), ?);", [username, token]);
         return {success: true, code: 200, token};
@@ -106,7 +106,7 @@ const getComments = async (id, limit, page) => {
     const offset = (page - 1) * (limit);
     try {
         conn = await pool.getConnection();
-        rows = await conn.query("SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? ORDER BY ID LIMIT ? OFFSET ?;", [id, limit, offset]);
+        rows = await conn.query("SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? ORDER BY ID DESC LIMIT ? OFFSET ?;", [id, limit, offset]);
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "no data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
@@ -129,4 +129,12 @@ const addComment = async (token, post, content) => {
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
 
-module.exports = {signUp, authenticate, removeExpiredTokens, verifyToken, getPosts, getPost, getUser, dropSession, getComments, addPost, addComment};
+const editUser = async (token, username, display_name, description) => {
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        result = await conn.query("UPDATE users SET username = ?, display_name = ?, description = ? WHERE id = (SELECT id FROM sessions WHERE token = ?)", [username, display_name, description, token]);
+        return {success: true, code: 200};
+    } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
+};
+module.exports = {signUp, authenticate, removeExpiredTokens, verifyToken, getPosts, getPost, getUser, dropSession, getComments, addPost, addComment, editUser};

@@ -17,6 +17,9 @@ app.get("/", (req, res) => {
 app.get("/profile", (req, res) => {
     res.render('profile');
 });
+app.get("/profile/edit", (req, res) => {
+    res.render('profile/edit');
+});
 app.get("/new-post", (req, res) => {
     res.render('new-post');
 });

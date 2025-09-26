@@ -12,8 +12,7 @@
         try {
             const response = await fetch(`/api/v1/user?id=${id}`);
             const userInfo = await response.json();
-            console.log(userInfo);
-            if (userInfo.success) {return userInfo.data[0]} else {throw err};
+            if (userInfo.success) {return userInfo.data[0]} else {throw "error"};
         } catch(err) {console.log(err)};
     };
     const showUserInfo = async () => {
@@ -29,7 +28,7 @@
         try {
             const response = await fetch(`/api/v1/posts?limit=${l}&page=${p}&user=${id}`);
             const posts = await response.json();
-            if (posts.success) {return posts.data} else {throw err};
+            if (posts.success) {return posts.data} else {throw "error"};
         } catch(err) {console.log(err)};
     };
     const showPosts = async (l = 10, p = 1) => {
@@ -48,7 +47,7 @@
             title.href = `/post/${element.id}`;
             creator.href = `/user/${element.poster_id}`;
             title.innerText = element.title;
-            creator.innerText = "Creator: " + element.DisplayName;
+            creator.innerText = "Creator: " + element.display_name;
             content.innerText = element.content.substring(0, 15) + `...`
             let elements = [document.createElement("hr"), title, document.createElement("br"), creator, document.createElement("br"), content, document.createElement("hr")]
             elements.forEach(element => {div.appendChild(element)});
