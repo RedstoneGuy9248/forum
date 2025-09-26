@@ -98,7 +98,7 @@ router.get("/user", async (req, res) => {
 
 
 router.get("/comments", async (req, res) => {
-    if (!req.query.id && !req.query.username) {return res.status(400).json({success: false, error: "specify post id"});};
+    if (!req.query.id) {return res.status(400).json({success: false, error: "specify post id"});};
     const id = parseInt(req.query.id);
     if (!id) {return res.status(400).json({success: false, error: "id should be int"});};
     let limit = 10;
@@ -120,11 +120,11 @@ router.post("/addpost", async (req, res) => {
     const tokenResult = await functions.verifyToken(token);
     if (!tokenResult.success) {return res.status(tokenResult.code).json({success: false, error: tokenResult.error});};
     const result = await functions.addPost(token, title, content);
-    return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
+    return res.status(result.code).json(result.success ? {success: result.success, id: result.id} : {success: result.success, error: result.error});
 });
 
 router.post("/addcomment", async (req, res) => {
-    if (!req.body || !req.body.post || !req.body.content) {return res.status(400).json({success: false, error: "specify post title and content"});};
+    if (!req.body || !req.body.post || !req.body.content) {return res.status(400).json({success: false, error: "specify post id and comment content"});};
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "unauthenticated"});};
     const token = req.cookies.token;
     const { post, content } = req.body;

@@ -1,21 +1,40 @@
+<div id="userInfo"></div>
 <div id="posts"></div>
 <button onclick="previousPage()">Previous Page</button>
 <button id="nextPage" onclick="nextPage()">Next Page</button>
 <p id="pagep">Current Page: </p>
 <script>
+    const id = parseInt("<%= id %>");
     let l = 10;
     let p = 1;
     const pagep = document.querySelector("#pagep");
+    const getUserInfo = async () => {
+        try {
+            const response = await fetch(`/api/v1/user?id=${id}`);
+            const userInfo = await response.json();
+            console.log(userInfo);
+            if (userInfo.success) {return userInfo.data[0]} else {throw err};
+        } catch(err) {console.log(err)};
+    };
+    const showUserInfo = async () => {
+        const userInfoDiv = document.querySelector("#userInfo");
+        const userInfo = await getUserInfo();
+        const displayName = document.createElement("p"); const username = document.createElement("p"); const description = document.createElement("p");
+        displayName.classList.add("displayName"); username.classList.add("username"); description.classList.add("description");
+        displayName.innerText = userInfo.display_name; username.innerText = "username: " + userInfo.username; description.innerText = userInfo.description;
+        const elements = [displayName, username, description];
+        elements.forEach(element => userInfoDiv.appendChild(element));
+    };
     const getPosts = async (l = 10, p = 1) => {
         try {
-            const response = await fetch(`/api/v1/posts?limit=${l}&page=${p}`);
+            const response = await fetch(`/api/v1/posts?limit=${l}&page=${p}&user=${id}`);
             const posts = await response.json();
             if (posts.success) {return posts.data} else {throw err};
         } catch(err) {console.log(err)};
     };
     const showPosts = async (l = 10, p = 1) => {
         const postsDiv = document.querySelector("#posts");
-        const posts = await getPosts(l, p);
+        const posts = await getPosts(l, p); //make func to, for each of the posts, append a child and fill its info using the array element.
         if (!posts) {return false};
         const nextButton = document.querySelector("#nextPage");
         if (posts.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
@@ -29,7 +48,7 @@
             title.href = `/post/${element.id}`;
             creator.href = `/user/${element.poster_id}`;
             title.innerText = element.title;
-            creator.innerText = "Creator: " + element.display_name;
+            creator.innerText = "Creator: " + element.DisplayName;
             content.innerText = element.content.substring(0, 15) + `...`
             let elements = [document.createElement("hr"), title, document.createElement("br"), creator, document.createElement("br"), content, document.createElement("hr")]
             elements.forEach(element => {div.appendChild(element)});
@@ -55,6 +74,7 @@
         await showPosts(10, p);
         updatePageP();
     };
+    showUserInfo();
     showPosts();
     updatePageP();
 </script>

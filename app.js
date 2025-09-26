@@ -23,14 +23,17 @@ app.get("/new-post", (req, res) => {
 app.get("/post", (req, res) => {
     res.render('post');
 });
-app.get("/user", (req, res) => {
-    res.render('user');
+app.get("/user/:id", (req, res) => {
+    res.render('user', {id: req.params.id});
 });
 app.get("/login", (req, res) => {
     res.render('login');
 });
 app.get("/signup", (req, res) => {
     res.render('signup');
+});
+app.get("/post/:id", (req, res) => {
+    res.render('post', {id: req.params.id});
 });
 app.use("/api/v1", routeApiV1);
 app.listen(5000, () => {console.log("http://localhost:5000");});

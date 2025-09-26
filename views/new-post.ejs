@@ -1,11 +1,11 @@
 <a href="/login">Unauthenticated. Log In </a>
-<form id="postForm">
+<div id="postForm">
     <label for="title">Title</label><br>
     <input type="text" id="title" name="title"><br>
     <label for="content">Content</label><br>
     <textarea type="text" id="content" name="content"></textarea><br>
-    <button type="submit" id="post-button">Post</button>
-</form>
+    <button id="post-button">Post</button>
+</div>
 <script>
     const p = document.querySelector("a");
     p.style.display = "none";
@@ -25,7 +25,23 @@
         } catch(err) {console.log(err)};
     };
     checkAuth();
-    document.querySelector("#post-button").addEventListener("click", () => {alert("havent coded this feature yet lol")});
+    document.querySelector("#post-button").addEventListener("click", async () => {
+        const title = document.querySelector("#title").value;
+        const content = document.querySelector("#content").value;
+        if (!title || !content) {alert("enter valid title or content"); return false};
+        const response = await fetch("/api/v1/addpost", {
+            method: "POST",
+            credentials: "same-origin",
+            body: JSON.stringify({title, content}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const result = await response.json();
+        if (result.success) {
+            window.location.href = `/post/${result.id}`
+        } else {alert("internal server error: try again later"); window.location.href = "/";}
+    });
 </script>
 <!-- textarea -->
  

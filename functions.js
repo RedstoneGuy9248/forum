@@ -74,7 +74,7 @@ const getPosts = async (limit, page, user) => {
 const getPost = async (id) => {
     try {
         conn = await pool.getConnection();
-        rows = await conn.query("SELECT * FROM posts WHERE ID = ?;", [id]);
+        rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE A.id = ?;", [id]);
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "no data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
@@ -106,7 +106,7 @@ const getComments = async (id, limit, page) => {
     const offset = (page - 1) * (limit);
     try {
         conn = await pool.getConnection();
-        rows = await conn.query("SELECT * FROM comments WHERE post_id = ? ORDER BY ID LIMIT ? OFFSET ?;", [id, limit, offset]);
+        rows = await conn.query("SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? ORDER BY ID LIMIT ? OFFSET ?;", [id, limit, offset]);
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "no data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
@@ -115,8 +115,9 @@ const addPost = async (token, title, content) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        result = await conn.query("INSERT INTO posts (poster_id, title, content) VALUES ((SELECT id FROM sessions WHERE token = ?), ?, ?)", [token, title, content]);
-        return {success: true, code: 200};
+        result = await conn.query("INSERT INTO posts (poster_id, title, content) VALUES ((SELECT id FROM sessions WHERE token = ?), ?, ?);", [token, title, content]);
+        id = await conn.query("SELECT LAST_INSERT_ID() AS id;");
+        return {success: true, code: 200, id: parseInt(id[0].id)};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
 const addComment = async (token, post, content) => {
