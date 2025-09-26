@@ -1,4 +1,0 @@
-fix login/signup error (too much data given rn, insecure)
-optional:
-refactor all the code to use http codes instead of {success: true}
-make the ui better
