@@ -11,7 +11,7 @@
     <button id="update">Update</button>
 </div>
 <script>
-    if (!(document.cookie == "authStatus=true")) {window.location.href = "/login"};
+    if (!(document.cookie.split(';').map(element => element.trim()).includes("authStatus=true"))) {window.location.href = "/login"};
     const profileDiv = document.querySelector("#profileDiv");
     const fields = Array.from(document.querySelectorAll(".profileDivField"));
     profileDiv.style.display = "none";

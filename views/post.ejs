@@ -19,7 +19,7 @@
     const title = document.querySelector(".title");
     const postContent = document.querySelector(".full-content");
     const postCreator = document.querySelector(".post-creator");
-    document.querySelector("#newComment").style.display = document.cookie == "authStatus=true" ? "inline" : "none";
+    document.querySelector("#newComment").style.display = document.cookie.split(';').map(element => element.trim()).includes("authStatus=true") ? "inline" : "none";
     document.querySelector("#commentButton").addEventListener("click", async () => {
         //data to send: post id, content
         //id is in var id

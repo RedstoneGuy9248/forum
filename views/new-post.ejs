@@ -6,7 +6,7 @@
     <button id="post-button">Post</button>
 </div>
 <script>
-    if (!(document.cookie == "authStatus=true")) {window.location.href = "/login"};
+    if (!(document.cookie.split(';').map(element => element.trim()).includes("authStatus=true"))) {window.location.href = "/login"};
     document.querySelector("#post-button").addEventListener("click", async () => {
         const title = document.querySelector("#title").value;
         const content = document.querySelector("#content").value;

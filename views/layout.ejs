@@ -78,7 +78,7 @@
                 buttons[4].style.display = "inline";
             }
         };
-        setNavbar(document.cookie == "authStatus=true");
+        setNavbar(document.cookie.split(';').map(element => element.trim()).includes("authStatus=true"));
         
     </script>
     <%- body %>
