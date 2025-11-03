@@ -25,21 +25,20 @@ A simple forum with secure login, posts, comments, and profiles.
 
 * Node.js
 * npm
-* MariaDB Server & Client
+* Docker
 
 ## Setup
 1. Clone the repository locally
 
-2. Import the database schema:
-
-   ```bash
-   mysql -u username -p database_name < schema.sql
-   ```
-
-3. Configure environment variables:
+2. Configure environment variables:
 
    * Copy `.env.example` to `.env`
    * Fill in your own database credentials and secrets.
+
+3. Start Database:
+   ```bash
+   docker compose up -d
+   ```
 
 4. Install dependencies:
 
