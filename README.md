@@ -49,5 +49,5 @@ A simple forum with secure login, posts, comments, and profiles.
 5. Run:
 
    ```bash
-   npm test
+   npm start
    ```
