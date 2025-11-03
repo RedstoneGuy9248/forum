@@ -1,0 +1,14 @@
+# docker compose file for database
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      -  MARIADB_ROOT_PASSWORD=${dbpassword}
+      -  MARIADB_USER=${dbusername}
+      -  MARIADB_PASSWORD=${dbpassword}
+      -  MARIADB_DATABASE=${dbname}
+    ports:
+      - ${dbport}:3306
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/setup.sql
