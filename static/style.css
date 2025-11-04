@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&family=Jaro:opsz@6..72&family=Honk&family=Cal+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+/*Body*/
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #0e1113;
+  color: white;
+}
+
+body button{
+    font-family: "Lexend", sans-serif;
+}
+
+/*Login, Signup Pages*/
+
+.login, .login form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Outfit", sans-serif;
+}
+.login h3 {
+    font-size: 3.5rem;
+    
+}
+.login input{
+    margin-top: 10px;
+    border-radius: 40px;
+    font-family: "Outfit", sans-serif;
+    height: 30px;
+    width: 300px;
+    font-size: 1.25rem;
+}
+.login input::placeholder {
+  text-align: center;
+}
+.login button {
+    margin-top: 10px;
+    background-color: #6aa9d3;
+    font-size: 1.5rem;
+    height: 40px;
+    width: 300px;
+    border-radius: 40px;
+}
+.login #info {
+    font-size: 40px;
+}
+
+/*Navbar*/
+
+.navbar {
+    font-size: 1rem;
+}
+
+#navbar {
+  padding: 1rem;
+  width: 100%;
+  border-bottom: solid grey 4px;
+}
+
+/*Index*/
+.postsList {
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+div.post:hover {
+    background-color: #25282a;
+}
+
+div.post a:link {
+    color:white;
+}
+div.post a:visited {
+    color:#8ba2ad;
+}
+div.post a, div.post p {
+    font-family: "Lexend", sans-serif;
+}
+div.post .title {
+    font-size: 2rem;
+}
+
+/*
+Navbar: .navbar 
+Posts List (on home page, user page): .postsList's children
+Pagination: .pagination
+Login page: .login's children
+new post page: .newPost's children
+view post details: .postDetails's children, 
+new comment: .newComment's children
+comments list: .commentsList's children
+view user details: .userInfo's children
+edit profile: #editProfile
+
+
+
+
+pages to css:
+login X
+signup X
+layout X 
+index
+new post
+view post
+edit profile
+own profile
+view user
+
+*/

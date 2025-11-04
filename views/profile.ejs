@@ -1,9 +1,9 @@
-<div id="userInfo"></div>
-<button onclick="window.location.href='/profile/edit'">Edit Profile</button>
-<div id="posts"></div>
-<button onclick="previousPage()">Previous Page</button>
-<button id="nextPage" onclick="nextPage()">Next Page</button>
-<p id="pagep">Current Page: </p>
+<div class="userInfo" id="userInfo"></div>
+<button id="editProfile" onclick="window.location.href='/profile/edit'">Edit Profile</button>
+<div class="postsList" id="posts"></div>
+<button class="pagination" onclick="previousPage()">Previous Page</button>
+<button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
+<p class="pagination" id="pagep">Current Page: </p>
 <script>
     let l = 10;
     let p = 1;

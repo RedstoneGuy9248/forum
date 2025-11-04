@@ -1,16 +1,18 @@
-<u><h3 class="title"></h3></u>
-<a class="post-creator"></a>
-<p class="full-content"></p>
-<div id="newComment">
+<div class="postDetails">
+    <u><h3 class="title"></h3></u>
+    <a class="post-creator"></a>
+    <p class="full-content"></p>
+</div>
+<div class="newComment" id="newComment">
     <label for="comment">Comment: </label>
     <input id="comment" name="comment" maxlength="512">
     <button id="commentButton">Comment</button>
 </div>
 <h3>Comments: </h3>
-<div id="comments"></div>
-<button id="previousPage" onclick="previousPage()">Previous Page</button>
-<button id="nextPage" onclick="nextPage()">Next Page</button>
-<p id="pagep">Current Page: </p>
+<div class="commentsList" id="comments"></div>
+<button class="pagination" id="previousPage" onclick="previousPage()">Previous Page</button>
+<button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
+<p class="pagination" id="pagep">Current Page: </p>
 <script>
     let l = 10;
     let p = 1;

@@ -1,7 +1,7 @@
-<div id="posts"></div>
-<button onclick="previousPage()">Previous Page</button>
-<button id="nextPage" onclick="nextPage()">Next Page</button>
-<p id="pagep">Current Page: </p>
+<div class="postsList" id="posts"></div>
+<button class="pagination" onclick="previousPage()">Previous Page</button>
+<button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
+<p class="pagination" id="pagep">Current Page: </p>
 <script>
     let l = 10;
     let p = 1;
@@ -24,20 +24,21 @@
         .map(element => {
             let div = document.createElement("div");
             div.classList.add("post");
-            let title = document.createElement("a"); let content = document.createElement("p"); let creator = document.createElement("a");
-            title.classList.add("title"); content.classList.add("content"); creator.classList.add("creator");
+            div.onclick = () => {window.location.href = `/post/${element.id}`};
+            let title = document.createElement("a"); let creator = document.createElement("a");
+            title.classList.add("title"); creator.classList.add("creator");
             title.href = `/post/${element.id}`;
             creator.href = `/user/${element.poster_id}`;
             title.innerText = element.title;
             creator.innerText = "Creator: " + element.display_name;
-            content.innerText = element.content.substring(0, 15) + `...`
-            let elements = [document.createElement("hr"), title, document.createElement("br"), creator, document.createElement("br"), content, document.createElement("hr")]
+            let elements = [document.createElement("hr"), title, document.createElement("br"), creator]
             elements.forEach(element => {div.appendChild(element)});
             return div;
         })
         .forEach(element => {
             postsDiv.appendChild(element);
         });
+        postsDiv.appendChild(document.createElement("hr"))
     };
     const updatePageP = () => {
         pagep.innerText = "Current Page: " + p;

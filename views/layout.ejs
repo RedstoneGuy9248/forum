@@ -4,55 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        .title, .displayName {
-            font-size: 3rem;
-            padding: 0px;
-            margin: 0px;
-
-        }
-        .creator {
-            font-size: 2rem;
-            padding: 0px;
-            margin: 0px;
-        }
-        .content, .post-creator {
-            font-size: 1rem;
-            padding: 0px;
-            margin: 0px;
-        }
-        .full-content {
-            font-size: 2rem;
-            padding: 0px;
-            margin: 0px;
-            border: solid black 0.125rem
-        }
-        .username {
-            font-size: 1rem;
-            padding: 0px;
-            margin: 0px;
-        }
-        .description {
-            font-size: 2rem;
-            padding: 0px;
-            margin: 0px;
-        }
-        .profileDivField {
-            border: 2px solid black;
-            margin: 3px;
-        }
-        
-    </style>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <nav>
+    <nav id="navbar">
         <div>
-            <button id="home" onclick='window.location.href="/"'>Home</button>
-            <button id="post" onclick='window.location.href="/new-post"'>Post</button>
-            <button id="profile" onclick='window.location.href="/profile"'>Profile</button>
-            <button id="login" onclick='window.location.href="/login"'>Login</button>
-            <button id="signup" onclick='window.location.href="/signup"'>Signup</button>
-            <button id="logout">Logout</button>
+            <button class="navbar" id="home" onclick='window.location.href="/"'>Home</button>
+            <button class="navbar" id="post" onclick='window.location.href="/new-post"'>Post</button>
+            <button class="navbar" id="profile" onclick='window.location.href="/profile"'>Profile</button>
+            <button class="navbar" id="login" onclick='window.location.href="/login"'>Login</button>
+            <button class="navbar" id="signup" onclick='window.location.href="/signup"'>Signup</button>
+            <button class="navbar" id="logout">Logout</button>
         </div>
     </nav>
     <script>

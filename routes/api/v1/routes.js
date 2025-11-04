@@ -2,9 +2,9 @@ const functions = require("../../../functions");
 const express = require("express");
 const router = express.Router();
 const checkIfInputsGiven = (req, res, next) => {
-    if (!req.body) {return res.status(400).json({success: false, error: "provide username and password"});};
-    if (!req.body.username) {return res.status(400).json({success: false, error: "provide username"});};
-    if (!req.body.password) {return res.status(400).json({success: false, error: "provide password"});};
+    if (!req.body) {return res.status(400).json({success: false, error: "Provide username and password"});};
+    if (!req.body.username) {return res.status(400).json({success: false, error: "Provide username"});};
+    if (!req.body.password) {return res.status(400).json({success: false, error: "Provide password"});};
     next();
 };
 
@@ -55,7 +55,7 @@ router.get("/logout", async (req, res) => {
 });
 
 router.get("/verifytoken", async (req, res) => {
-    if (!req.cookies.token) {return res.status(401).json({success: false, error: "unauthenticated"});};
+    if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const result = await functions.verifyToken(req.cookies.token);
     return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
 
@@ -82,7 +82,7 @@ router.get("/posts", async (req, res) => {
 });
 
 router.get("/user", async (req, res) => {
-    if (!req.query.id && !req.query.username) {return res.status(400).json({success: false, error: "specify id or username"});};
+    if (!req.query.id && !req.query.username) {return res.status(400).json({success: false, error: "Specify id or username"});};
     let username;
     if (req.query.username) {username = req.query.username;}
     let result;
@@ -113,8 +113,8 @@ router.get("/comments", async (req, res) => {
 
 //add data
 router.post("/addpost", async (req, res) => {
-    if (!req.body || !req.body.title || !req.body.content) {return res.status(400).json({success: false, error: "specify post title and content"});};
-    if (!req.cookies.token) {return res.status(401).json({success: false, error: "unauthenticated"});};
+    if (!req.body || !req.body.title || !req.body.content) {return res.status(400).json({success: false, error: "Specify post title and content"});};
+    if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
     const { title, content } = req.body;
     const tokenResult = await functions.verifyToken(token);
@@ -124,8 +124,8 @@ router.post("/addpost", async (req, res) => {
 });
 
 router.post("/addcomment", async (req, res) => {
-    if (!req.body || !req.body.post || !req.body.content) {return res.status(400).json({success: false, error: "specify post id and comment content"});};
-    if (!req.cookies.token) {return res.status(401).json({success: false, error: "unauthenticated"});};
+    if (!req.body || !req.body.post || !req.body.content) {return res.status(400).json({success: false, error: "Specify post id and comment content"});};
+    if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
     const { post, content } = req.body;
     const tokenResult = await functions.verifyToken(token);
@@ -135,8 +135,8 @@ router.post("/addcomment", async (req, res) => {
 });
 
 router.put("/profile", async (req, res) => {
-    if (!req.body || !req.body.username || !req.body.display_name || !req.body.description) {return res.status(400).json({success: false, error: "specify edited content"});};
-    if (!req.cookies.token) {return res.status(401).json({success: false, error: "unauthenticated"});};
+    if (!req.body || !req.body.username || !req.body.display_name || !req.body.description) {return res.status(400).json({success: false, error: "Specify edited content"});};
+    if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
     const { username, display_name, description } = req.body;
     const tokenResult = await functions.verifyToken(token);

@@ -1,13 +1,12 @@
-<h3>Sign Up</h3>
-<form>
-    <label for="username">Username:</label><br>
-    <input id="username" type="text" maxlength="30"><br>
-    <label for="password">Password:</label><br>
-    <input id="password" type="password" maxlength="72"><br>
-    <button type="button" id="submit">Sign Up</button>
-    <button type="reset">Reset values</button>
-</form>
-<p style="display: none;"></p>
+<div class="login">
+    <h3>Sign Up</h3>
+    <form>
+        <input id="username" placeholder="Username" type="text" maxlength="30"><br>
+        <input id="password" placeholder="Password" type="password" maxlength="72"><br>
+        <button type="button" id="submit">Sign Up</button>
+    </form>
+    <p id="info" style="display: none;"></p>
+</div>
 <script>
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
