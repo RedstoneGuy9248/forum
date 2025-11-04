@@ -1,10 +1,11 @@
 const mariadb = require("mariadb");
-if (process.env.DEV === "true") {
+const DEV = process.env.DEV === "true";
+if (DEV) {
     require("dotenv").config({quiet: true});
 };
 const pool = mariadb.createPool({
-    host: "localhost",
-    port: process.env.dbport,
+    host: DEV ? "localhost" : "db",
+    port: DEV ? process.env.dbport : 3306,
     user: process.env.dbusername,
     password: process.env.dbpassword,
     database: process.env.dbname,
