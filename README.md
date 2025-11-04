@@ -35,19 +35,7 @@ A simple forum with secure login, posts, comments, and profiles.
    * Copy `.env.example` to `.env`
    * Fill in your own database credentials and secrets.
 
-3. Start Database:
+3. Start:
    ```bash
    docker compose up -d
-   ```
-
-4. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-5. Run:
-
-   ```bash
-   npm start
    ```
