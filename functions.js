@@ -3,7 +3,16 @@ const crypto = require('crypto');
 const saltRounds = 10;
 const pool = require("./db");
 const cron = require("node-cron");
-
+const startupTests = async () => {
+    const test1 = await DBTest();
+    if (test1) {console.log("\x1B[1;4;32m → Startup Tests Passed ←\x1B[22;24;0m");}
+};
+const DBTest = async () => {
+    try {
+        await pool.getConnection();
+        return true;
+    } catch(err) {console.log("\x1B[1;4;31m → DB Connection timed out. Exiting with error code 1. ←\x1B[22;24;0m"); process.exit(1);}
+};
 
 const signUp = async (username, password) => {
     const hash = await bcrypt.hash(password, saltRounds);
@@ -67,7 +76,7 @@ const getPosts = async (limit, page, user) => {
         } else {
             rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id ORDER BY ID DESC LIMIT ? OFFSET ?;", [limit, offset]);
         };
-        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "no data meets specifications"};};
+        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: true, code: 200, error: "no data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
 
@@ -107,7 +116,7 @@ const getComments = async (id, limit, page) => {
     try {
         conn = await pool.getConnection();
         rows = await conn.query("SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? ORDER BY ID DESC LIMIT ? OFFSET ?;", [id, limit, offset]);
-        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "no data meets specifications"};};
+        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: true, code: 200, error: "no data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
 
@@ -137,4 +146,4 @@ const editUser = async (token, username, display_name, description) => {
         return {success: true, code: 200};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "internal server error"};} finally {if (conn) {conn.end();}};
 };
-module.exports = {signUp, authenticate, removeExpiredTokens, verifyToken, getPosts, getPost, getUser, dropSession, getComments, addPost, addComment, editUser};
+module.exports = {signUp, authenticate, removeExpiredTokens, verifyToken, getPosts, getPost, getUser, dropSession, getComments, addPost, addComment, editUser, startupTests};
