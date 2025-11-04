@@ -1,5 +1,7 @@
 const mariadb = require("mariadb");
-require("dotenv").config({quiet: true});
+if (process.env.DEV === "true") {
+    require("dotenv").config({quiet: true});
+};
 const pool = mariadb.createPool({
     host: "localhost",
     port: process.env.dbport,
