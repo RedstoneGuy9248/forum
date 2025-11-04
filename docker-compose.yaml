@@ -10,7 +10,7 @@ services:
     volumes:
       - ./schema.sql:/docker-entrypoint-initdb.d/setup.sql
   app:
-    build: .
+    image: ghcr.io/RedstoneGuy9248/forum:latest
     depends_on: [db]
     container_name: forum
     restart: always
