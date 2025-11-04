@@ -23,8 +23,6 @@ A simple forum with secure login, posts, comments, and profiles.
 
 ## Prerequisites
 
-* Node.js
-* npm
 * Docker
 
 ## Setup
