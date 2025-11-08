@@ -33,7 +33,7 @@ CREATE TABLE `comments` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
   CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2075 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2089 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,11 +49,11 @@ CREATE TABLE `posts` (
   `title` varchar(128) NOT NULL,
   `content` varchar(1024) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `poster_id` (`poster_id`),
   KEY `idx_title` (`title`),
   KEY `idx_content` (`content`(768)),
+  KEY `idx_posts_poster_id` (`poster_id`),
   CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`poster_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=931 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=936 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,8 +88,9 @@ CREATE TABLE `users` (
   `display_name` varchar(128) NOT NULL,
   `description` varchar(512) DEFAULT 'Hi! I''m new!',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=1008 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+  UNIQUE KEY `username` (`username`),
+  KEY `idx_users_username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1015 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -101,4 +102,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-09-27  4:06:21
+-- Dump completed on 2025-11-08  8:56:33
