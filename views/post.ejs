@@ -1,7 +1,9 @@
 <div class="postDetails">
     <u><h3 class="title"></h3></u>
     <a class="post-creator"></a>
+    <div class="content">
     <p class="full-content"></p>
+    </div>
 </div>
 <div class="newComment" id="newComment">
     <label for="comment">Comment: </label>
@@ -27,6 +29,7 @@
         //id is in var id
         // content to be taken as comment.value
         const content = document.querySelector("#comment").value;
+        if (!content) {return alert("error: empty comment")};
         const response = await fetch("/api/v1/addcomment", {
             method: "POST",
             credentials: "same-origin",

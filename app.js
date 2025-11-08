@@ -15,31 +15,29 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.use(expressLayouts);
     app.use(express.static("./static"));
     app.get("/", (req, res) => {
-        res.render('index');
+        res.render('index', {title: "Forum: Home"});
     });
     app.get("/profile", (req, res) => {
-        res.render('profile');
+        res.render('profile', {title: "Forum: Profile"});
     });
     app.get("/profile/edit", (req, res) => {
-        res.render('profile/edit');
+        res.render('profile/edit', {title: "Forum: Edit Profile"});
     });
     app.get("/new-post", (req, res) => {
-        res.render('new-post');
+        res.render('new-post', {title: "Forum: New Post"});
     });
-    app.get("/post", (req, res) => {
-        res.render('post');
-    });
+
     app.get("/user/:id", (req, res) => {
-        res.render('user', {id: req.params.id});
+        res.render('user', {id: req.params.id, title: `Forum: View User`});
     });
     app.get("/login", (req, res) => {
-        res.render('login');
+        res.render('login', {title: "Forum: Login"});
     });
     app.get("/signup", (req, res) => {
-        res.render('signup');
+        res.render('signup', {title: "Forum: Signup"});
     });
     app.get("/post/:id", (req, res) => {
-        res.render('post', {id: req.params.id});
+        res.render('post', {id: req.params.id, title: `Forum: View Post`});
     });
     app.use("/api/v1", routeApiV1);
     app.listen(5000, () => {console.log("http://localhost:5000");});

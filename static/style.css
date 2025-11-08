@@ -10,8 +10,11 @@ html, body {
   color: white;
 }
 
-body button{
+body, button{
     font-family: "Lexend", sans-serif;
+}
+button {
+      cursor: pointer;
 }
 
 /*Login, Signup Pages*/
@@ -73,11 +76,14 @@ div.post:hover {
     background-color: #25282a;
 }
 
-div.post a:link {
+a:link {
     color:white;
 }
-div.post a:visited {
-    color:#8ba2ad;
+a:visited {
+    color:#c7d0d4;
+}
+a:hover {
+    color: #e5f1ff;
 }
 div.post a, div.post p {
     font-family: "Lexend", sans-serif;
@@ -85,6 +91,107 @@ div.post a, div.post p {
 div.post .title {
     font-size: 2rem;
 }
+/*Pagination*/
+
+button.pagination {
+    border-radius: 10px;
+    margin-left: 5px;
+    margin-bottom: 0px;
+}
+p.pagination {
+    margin-top: 0px;
+    margin-left: 5px;
+    font-size: 14px;
+    opacity: 0.7;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+}
+
+/*New Post*/
+
+.newPost {
+  margin: 20px;
+  font-family: "Lexend", sans-serif;
+}
+
+.newPost input,
+.newPost textarea {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-family: "Lexend", sans-serif;
+  font-size: 1rem;
+}
+
+.newPost textarea {
+  height: 200px;
+  resize: vertical;
+}
+
+#post-button {
+    margin-top: 10px;
+    background-color: #6aa9d3;
+    font-size: 1rem;
+    height: 30px;
+    width: 60px;
+    border-radius: 40px;
+}
+/*Profile, User*/
+
+.userInfo .displayName {
+    font-family: "Outfit", sans-serif;
+    font-weight: 600;
+    font-size: 3rem;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 3px;
+}
+
+.userInfo .username {
+    margin-left: 3px;
+    font-size: 1rem;
+    margin-top: -10px;
+    margin-bottom: 0px;
+    opacity: 0.7;
+}
+
+.userInfo .description {
+    font-size: 1.5rem;
+    margin: 10px;
+}
+/*View Post*/
+
+.postDetails .title {
+    font-size: 3rem;
+    font-weight: 400;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-family: "Outfit", sans-serif;
+}
+.postDetails .content {
+    margin: 12px 4px;
+    background-color: #101315;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #0c0e0f;
+    font-family: "Lexend", monospace;
+}
+
+.newComment button {
+    background-color: #6aa9d3;
+    font-size: 1rem;
+    height: 30px;
+    width: 100px;
+    border-radius: 40px;
+}
+.newComment input {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-family: "Lexend", sans-serif;
+  font-size: 1rem;
+}
+
+
 
 /*
 Navbar: .navbar 
@@ -105,11 +212,11 @@ pages to css:
 login X
 signup X
 layout X 
-index
-new post
+index X
+new post X
 view post
 edit profile
-own profile
-view user
+own profile X
+view user X
 
 */
