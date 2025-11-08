@@ -32,8 +32,10 @@
             window.location.href = "/login"
         });
         const setNavbar = bool => {
-            Array.from(buttons).slice(0,3).forEach(element => element.style.display = "inline");
+            buttons[0].style.display = "inline";
             if (bool) {
+                buttons[1].style.display = "inline";
+                buttons[2].style.display = "inline";
                 buttons[5].style.display = "inline";
             } else {
                 buttons[3].style.display = "inline";
