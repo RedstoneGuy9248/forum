@@ -1,6 +1,8 @@
 const functions = require("../../../functions");
 const express = require("express");
 const router = express.Router();
+const rateLimitsObj = require("../../../rate-limits");
+const limits = rateLimitsObj.limits.api.v1;
 const checkIfInputsGiven = (req, res, next) => {
     if (!req.body) {return res.status(400).json({success: false, error: "Provide username and password"});};
     if (!req.body.username) {return res.status(400).json({success: false, error: "Provide username"});};
@@ -10,13 +12,13 @@ const checkIfInputsGiven = (req, res, next) => {
 
 //AUTH
 
-router.post("/signup", checkIfInputsGiven, async (req, res) => {
+router.post("/signup", limits.signup, checkIfInputsGiven, async (req, res) => {
     const { username, password } = req.body;
     const result = await functions.signUp(username, password);
     if (result.success) {return res.status(result.code).json({success: result.success});} else {return res.status(result.code).json({success: result.success, error: result.error});};
 });
 
-router.post("/login", checkIfInputsGiven, async (req, res) => {
+router.post("/login", limits.login, checkIfInputsGiven, async (req, res) => {
     if (req.cookies.token) {
         return res.status(400).json({success: false, error:"already logged in. log out by GET /api/v1/logout"});
     } else {
@@ -38,7 +40,7 @@ router.post("/login", checkIfInputsGiven, async (req, res) => {
     };
 });
 
-router.get("/logout", async (req, res) => {
+router.get("/logout", limits.logout, async (req, res) => {
     if (req.cookies.token) {
         await functions.dropSession(req.cookies.token);
     };
@@ -54,7 +56,7 @@ router.get("/logout", async (req, res) => {
     res.status(200).json({success: true});
 });
 
-router.get("/verifytoken", async (req, res) => {
+router.get("/verifytoken", limits.verifytoken, async (req, res) => {
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const result = await functions.verifyToken(req.cookies.token);
     return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
@@ -63,7 +65,7 @@ router.get("/verifytoken", async (req, res) => {
 
 // get data
 
-router.get("/posts", async (req, res) => {
+router.get("/posts", limits.posts, async (req, res) => {
     let limit = 10;
     let page = 1;
     if (req.query.page) 
@@ -81,7 +83,7 @@ router.get("/posts", async (req, res) => {
     return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
 });
 
-router.get("/user", async (req, res) => {
+router.get("/user", limits.user, async (req, res) => {
     if (!req.query.id && !req.query.username) {return res.status(400).json({success: false, error: "Specify id or username"});};
     let username;
     if (req.query.username) {username = req.query.username;}
@@ -97,7 +99,7 @@ router.get("/user", async (req, res) => {
 });
 
 
-router.get("/comments", async (req, res) => {
+router.get("/comments", limits.comments, async (req, res) => {
     if (!req.query.id) {return res.status(400).json({success: false, error: "specify post id"});};
     const id = parseInt(req.query.id);
     if (!id) {return res.status(400).json({success: false, error: "id should be int"});};
@@ -112,7 +114,7 @@ router.get("/comments", async (req, res) => {
 });
 
 //add data
-router.post("/addpost", async (req, res) => {
+router.post("/addpost", limits.addpost, async (req, res) => {
     if (!req.body || !req.body.title || !req.body.content) {return res.status(400).json({success: false, error: "Specify post title and content"});};
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
@@ -123,7 +125,7 @@ router.post("/addpost", async (req, res) => {
     return res.status(result.code).json(result.success ? {success: result.success, id: result.id} : {success: result.success, error: result.error});
 });
 
-router.post("/addcomment", async (req, res) => {
+router.post("/addcomment", limits.addcomment, async (req, res) => {
     if (!req.body || !req.body.post || !req.body.content) {return res.status(400).json({success: false, error: "Specify post id and comment content"});};
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
@@ -134,7 +136,7 @@ router.post("/addcomment", async (req, res) => {
     return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
 });
 
-router.put("/profile", async (req, res) => {
+router.put("/profile", limits.profile, async (req, res) => {
     if (!req.body || !req.body.username || !req.body.display_name || !req.body.description) {return res.status(400).json({success: false, error: "Specify edited content"});};
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
