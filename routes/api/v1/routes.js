@@ -27,7 +27,7 @@ router.post("/login", limits.login, checkIfInputsGiven, async (req, res) => {
         if (result.success) {
             return res.status(result.code).cookie("token", result.token, {
                 httpOnly: true,
-                secure: false,
+                secure: true,
                 path: "/",
                 maxAge: 1000 * 60 * 60 * 24 * 7
             }).cookie("authStatus", true, {
@@ -45,7 +45,7 @@ router.get("/logout", limits.logout, async (req, res) => {
         await functions.dropSession(req.cookies.token);
     };
     res.clearCookie("token", {
-        secure: false,
+        secure: true,
         path: "/"
     });
     res.clearCookie("authStatus", {
