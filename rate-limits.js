@@ -20,7 +20,7 @@ const limits = {
             user: builder(1, 50),
             comments: builder(1, 300),
             addpost: builder(1, 5),
-            addcomment: builder(1, 60),
+            addcomment: builder(1, 20),
             profile: builder(1, 20),
         }
     },
