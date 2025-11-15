@@ -48,7 +48,7 @@ const verifyToken = async (token) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        const query = await conn.query("SELECT A.id, A.username, A.display_name, A.description FROM users AS A INNER JOIN sessions AS B ON A.id = B.id WHERE B.token = ?;", [token]);
+        const query = await conn.query("SELECT A.id, A.username, A.display_name, A.description, A.datetime FROM users AS A INNER JOIN sessions AS B ON A.id = B.id WHERE B.token = ?;", [token]);
         if (query.length === 0) {return {success: false, code: 401, error: "Invalid/Expired token"};} else {return {success: true, code: 200, data: query};};
     } catch(err) {console.log(err); return false;} finally {if (conn) {conn.end();}};
 };
@@ -92,9 +92,9 @@ const getUser = async (user) => {
     try {
         conn = await pool.getConnection();
         if (parseInt(user)) {
-            rows = await conn.query("SELECT id, username, display_name, description FROM users WHERE id = ?;", [user]);
+            rows = await conn.query("SELECT id, username, display_name, description, datetime FROM users WHERE id = ?;", [user]);
         } else {
-            rows = await conn.query("SELECT id, username, display_name, description FROM users WHERE username = ?;", [user]);
+            rows = await conn.query("SELECT id, username, display_name, description, datetime FROM users WHERE username = ?;", [user]);
         }
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "No data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};

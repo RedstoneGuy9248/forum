@@ -63,6 +63,9 @@ button {
   padding: 1rem;
   width: 100%;
   border-bottom: solid grey 4px;
+  background-color: #0e1113;
+  position: sticky;
+  top: 0;
 }
 
 /*Index*/
@@ -166,6 +169,7 @@ p.pagination {
     font-weight: 400;
     margin-top: 0px;
     margin-bottom: 0px;
+    margin-left: 5px;
     font-family: "Outfit", sans-serif;
 }
 .postDetails .content {
@@ -191,8 +195,21 @@ p.pagination {
   font-size: 1rem;
 }
 
+.datetime {
+    font-size: 0.8rem;
+    color: hsl(0, 0%, 50%);
+    margin-left: 5px;
+    margin-top: 0px;
+}
 
+.comment .commentContent, .comment .commentCreator {
+    margin-bottom: 0px;
+    margin-left: 5px;
+}
 
+#editProfile, .newComment label, .postDetails .post-creator {
+    margin-left: 5px;
+}
 /*
 Navbar: .navbar 
 Posts List (on home page, user page): .postsList's children

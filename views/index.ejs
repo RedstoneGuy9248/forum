@@ -25,13 +25,15 @@
             let div = document.createElement("div");
             div.classList.add("post");
             div.onclick = () => {window.location.href = `/post/${element.id}`};
-            let title = document.createElement("a"); let creator = document.createElement("a");
-            title.classList.add("title"); creator.classList.add("creator");
+            let title = document.createElement("a"); let creator = document.createElement("a"); let datetime = document.createElement("p");
+            title.classList.add("title"); creator.classList.add("creator"); datetime.classList.add("datetime");
             title.href = `/post/${element.id}`;
             creator.href = `/user/${element.poster_id}`;
             title.innerText = element.title;
             creator.innerText = "Creator: " + element.display_name;
-            let elements = [document.createElement("hr"), title, document.createElement("br"), creator]
+            date = moment(element.datetime).fromNow();
+            datetime.innerText = "Created: " + date;
+            let elements = [document.createElement("hr"), title, document.createElement("br"), creator, document.createElement("br"), datetime]
             elements.forEach(element => {div.appendChild(element)});
             return div;
         })

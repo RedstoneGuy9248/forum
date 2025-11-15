@@ -2,8 +2,9 @@
     <u><h3 class="title"></h3></u>
     <a class="post-creator"></a>
     <div class="content">
-    <p class="full-content"></p>
+        <p class="full-content"></p>
     </div>
+    <p class="datetime">Created: </p>
 </div>
 <div class="newComment" id="newComment">
     <label for="comment">Comment: </label>
@@ -22,6 +23,7 @@
     const id = parseInt("<%= id %>");
     const title = document.querySelector(".title");
     const postContent = document.querySelector(".full-content");
+    const postDateTime = document.querySelector(".datetime");
     const postCreator = document.querySelector(".post-creator");
     document.querySelector("#newComment").style.display = document.cookie.split(';').map(element => element.trim()).includes("authStatus=true") ? "inline" : "none";
     document.querySelector("#commentButton").addEventListener("click", async () => {
@@ -51,7 +53,7 @@
         postCreator.innerText = "- " + post.display_name;
         postCreator.href = `/user/${post.poster_id}`
         postContent.innerText = post.content;
-        //add comment feature later
+        postDateTime.innerText = "Created: " + moment(post.datetime).fromNow() + ` (${moment(post.datetime).format('MMMM Do YYYY')})`;
     };
     const getComments = async (l = 10, p = 1) => {
         try {
@@ -71,12 +73,14 @@
         .map(element => {
             let div = document.createElement("div");
             div.classList.add("comment");
-            let content = document.createElement("p"); let creator = document.createElement("a");
-            content.classList.add("commentContent"); creator.classList.add("commentCreator");
+            let content = document.createElement("p"); let creator = document.createElement("a"); let datetime = document.createElement("p");
+            content.classList.add("commentContent"); creator.classList.add("commentCreator"); datetime.classList.add("datetime");
             creator.href = `/user/${element.user_id}`;
             creator.innerText = "Commentor: " + element.display_name;
             content.innerText = element.content;
-            let elements = [document.createElement("hr"), creator, document.createElement("br"), content, document.createElement("hr")]
+            date = moment(element.datetime).fromNow();
+            datetime.innerText = "Created: " + moment(element.datetime).fromNow() + ` (${moment(element.datetime).format('MMMM Do YYYY')})`;
+            let elements = [document.createElement("hr"), creator, document.createElement("br"), content, document.createElement("br"), datetime, document.createElement("hr")]
             elements.forEach(element => {div.appendChild(element)});
             return div;
         })
