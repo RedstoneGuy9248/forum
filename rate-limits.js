@@ -22,6 +22,7 @@ const limits = {
             addpost: builder(1, 5),
             addcomment: builder(1, 20),
             profile: builder(1, 20),
+            addvote: builder(1, 60)
         }
     },
 };

@@ -19,7 +19,7 @@
     </nav>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script>
-        const buttons = document.querySelectorAll("button");
+        const buttons = document.querySelectorAll("button.navbar");
         buttons.forEach(element => element.style.display = "none");
         buttons[5].addEventListener("click", async () => {
             let result = await fetch("/api/v1/logout", {

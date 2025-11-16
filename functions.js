@@ -80,15 +80,25 @@ const getPosts = async (limit, page, user) => {
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
 
-const getPost = async (id) => {
+const getPost = async (id, token) => {
+    let conn;
+    let rows;
     try {
         conn = await pool.getConnection();
-        rows = await conn.query("SELECT A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE A.id = ?;", [id]);
+        if (token) {
+            rows = await conn.query("SELECT (SELECT SUM(value) FROM votes WHERE post_id = ?) AS vote_total, (SELECT value FROM votes WHERE user_id = (SELECT id FROM sessions WHERE token = ?) AND post_id = ?) AS voted, A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE A.id = ?;", [id, token, id, id]);
+        } else {
+            rows = await conn.query("SELECT (SELECT SUM(value) FROM votes WHERE post_id = ?) AS vote_total, A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE A.id = ?;", [id, id]);
+        }
+        if (rows.length && !rows[0].vote_total) {rows[0].vote_total = 0;} else {rows[0].vote_total = parseInt(rows[0].vote_total);};
+        if (rows.length && rows[0].hasOwnProperty("voted") && !rows[0].voted) {rows[0].voted = false;} else if (rows.length && rows[0].hasOwnProperty("voted")) {rows[0].voted = parseInt(rows[0].voted);};
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "No data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
 
 const getUser = async (user) => {
+    let conn;
+    let rows;
     try {
         conn = await pool.getConnection();
         if (parseInt(user)) {
@@ -101,9 +111,10 @@ const getUser = async (user) => {
 };
 
 const dropSession = async (token) => {
+    let conn;
         try {
         conn = await pool.getConnection();
-        result = await conn.query("DELETE FROM sessions WHERE token = ?", [token]);
+        await conn.query("DELETE FROM sessions WHERE token = ?", [token]);
         return {success: true, code: 200};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
@@ -124,7 +135,7 @@ const addPost = async (token, title, content) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        result = await conn.query("INSERT INTO posts (poster_id, title, content) VALUES ((SELECT id FROM sessions WHERE token = ?), ?, ?);", [token, title, content]);
+        await conn.query("INSERT INTO posts (poster_id, title, content) VALUES ((SELECT id FROM sessions WHERE token = ?), ?, ?);", [token, title, content]);
         id = await conn.query("SELECT LAST_INSERT_ID() AS id;");
         return {success: true, code: 200, id: parseInt(id[0].id)};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
@@ -133,7 +144,7 @@ const addComment = async (token, post, content) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        result = await conn.query("INSERT INTO comments (post_id, user_id, content) VALUES (?, (SELECT id FROM sessions WHERE token = ?), ?)", [post, token, content]);
+        await conn.query("INSERT INTO comments (post_id, user_id, content) VALUES (?, (SELECT id FROM sessions WHERE token = ?), ?)", [post, token, content]);
         return {success: true, code: 200};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
@@ -142,8 +153,26 @@ const editUser = async (token, username, display_name, description) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        result = await conn.query("UPDATE users SET username = ?, display_name = ?, description = ? WHERE id = (SELECT id FROM sessions WHERE token = ?)", [username, display_name, description, token]);
+        await conn.query("UPDATE users SET username = ?, display_name = ?, description = ? WHERE id = (SELECT id FROM sessions WHERE token = ?)", [username, display_name, description, token]);
         return {success: true, code: 200};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
-module.exports = {signUp, authenticate, removeExpiredTokens, verifyToken, getPosts, getPost, getUser, dropSession, getComments, addPost, addComment, editUser, startupTests};
+
+const addVote = async (token, post, value) => {
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        await conn.query("INSERT INTO votes VALUES ((SELECT id FROM sessions WHERE token = ?), ?, ?)", [token, post, value]);
+        return {success: true, code: 200};
+    } catch(err) {console.log(err); return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
+};
+module.exports = {signUp, authenticate, removeExpiredTokens, verifyToken, getPosts, getPost, getUser, dropSession, getComments, addPost, addComment, editUser, startupTests, addVote};
+
+
+
+
+
+
+
+
+

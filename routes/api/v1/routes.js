@@ -75,7 +75,11 @@ router.get("/posts", limits.posts, async (req, res) => {
     if (req.query.id) {id = parseInt(req.query.id);};
     if (!limit || !page) {return res.status(400).json({success: false, error: "int expected in limit/string"});}
     let result;
-    if (req.query.id) {result = await functions.getPost(id);} else if (req.query.user) {
+    if (req.query.id && req.cookies.token) {
+        result = await functions.getPost(id, req.cookies.token);
+    } else if (req.query.id) {
+        result = await functions.getPost(id);
+    } else if (req.query.user) {
         result = await functions.getPosts(limit, page, req.query.user);
     } else { 
         result = await functions.getPosts(limit, page);
@@ -133,7 +137,19 @@ router.post("/addcomment", limits.addcomment, async (req, res) => {
     const tokenResult = await functions.verifyToken(token);
     if (!tokenResult.success) {return res.status(tokenResult.code).json({success: false, error: tokenResult.error});};
     const result = await functions.addComment(token, post, content);
-    return res.status(result.code).json(result.success ? {success: result.success, data: result.data} : {success: result.success, error: result.error});
+    return res.status(result.code).json(result.success ? {success: result.success} : {success: result.success, error: result.error});
+});
+
+router.post("/addvote", limits.addvote, async (req, res) => {
+    if (!req.body || !req.body.post || !req.body.value) {return res.status(400).json({success: false, error: "Specify post id and comment content"});};
+    if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
+    if (!(req.body.value == 1 || req.body.value == -1)) {return res.status(400).json({success: false, error: "vote should be 1 (up) or -1 (down)"});};
+    const token = req.cookies.token;
+    const { post, value } = req.body;
+    const tokenResult = await functions.verifyToken(token);    
+    if (!tokenResult.success) {return res.status(tokenResult.code).json({success: false, error: tokenResult.error});};
+    const result = await functions.addVote(token, post, value);
+    return res.status(result.code).json(result.success ? {success: result.success} : {success: result.success, error: result.error});     
 });
 
 router.put("/profile", limits.profile, async (req, res) => {

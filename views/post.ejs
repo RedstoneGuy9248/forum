@@ -6,17 +6,24 @@
     </div>
     <p class="datetime">Created: </p>
 </div>
+<div class="voting">
+    <button id="upvote">&uarr;</button>
+    <p id="voteCount">Votes: </p>
+    <button id="downvote">&darr;</button>
+</div>
+<p id="voteStatus"></p>
 <div class="newComment" id="newComment">
     <label for="comment">Comment: </label>
     <input id="comment" name="comment" maxlength="512">
     <button id="commentButton">Comment</button>
 </div>
-<h3>Comments: </h3>
+<h3 id="commentsTitle">Comments: </h3>
 <div class="commentsList" id="comments"></div>
 <button class="pagination" id="previousPage" onclick="previousPage()">Previous Page</button>
 <button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
 <p class="pagination" id="pagep">Current Page: </p>
 <script>
+    console.log(buttons);
     let l = 10;
     let p = 1;
     const pagep = document.querySelector("#pagep");
@@ -25,7 +32,15 @@
     const postContent = document.querySelector(".full-content");
     const postDateTime = document.querySelector(".datetime");
     const postCreator = document.querySelector(".post-creator");
+    const authStatus = document.cookie.split(';').map(element => element.trim()).includes("authStatus=true");
+    const upvoteButton = document.querySelector("#upvote");
+    const downvoteButton = document.querySelector("#downvote");
+    const voteCountP = document.querySelector("#voteCount")
     document.querySelector("#newComment").style.display = document.cookie.split(';').map(element => element.trim()).includes("authStatus=true") ? "inline" : "none";
+    const hideVoteButtons = () => {[upvoteButton, downvoteButton].forEach(element => element.style.display = "none"); voteCountP.classList.add("buttons-hidden")};
+    upvoteButton.addEventListener("click", async () => {await vote(1); window.location.href = `/post/${id}`});
+    downvoteButton.addEventListener("click", async () => {await vote(-1); window.location.href = `/post/${id}`});
+    if (!authStatus) {hideVoteButtons();};
     document.querySelector("#commentButton").addEventListener("click", async () => {
         //data to send: post id, content
         //id is in var id
@@ -45,6 +60,17 @@
             window.location.href = `/post/${id}`
         } else {alert("internal server error: try again later"); window.location.href = `/post/${id}`;}
     });
+    const vote = async (value) => {
+        const response = await fetch("/api/v1/addvote", {
+            method: "POST",
+            credentials: "same-origin",
+            body: JSON.stringify({post: id, value}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+    };
+
     const getPost = async () => {
         const response = await fetch(`/api/v1/posts?id=${id}`);
         let post = await response.json();
@@ -54,6 +80,9 @@
         postCreator.href = `/user/${post.poster_id}`
         postContent.innerText = post.content;
         postDateTime.innerText = "Created: " + moment(post.datetime).fromNow() + ` (${moment(post.datetime).format('MMMM Do YYYY')})`;
+        voteCountP.innerText = "Votes: " + post.vote_total;
+        if (post.voted) {hideVoteButtons(); document.querySelector("#voteStatus").innerText = (post.voted) === 1 ? "You have Upvoted!" : "You have Downvoted!"}; 
+
     };
     const getComments = async (l = 10, p = 1) => {
         try {
