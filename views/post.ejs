@@ -13,8 +13,7 @@
 </div>
 <p id="voteStatus"></p>
 <div class="newComment" id="newComment">
-    <label for="comment">Comment: </label>
-    <input id="comment" name="comment" maxlength="512">
+    <input id="comment" placeholder="Comment" name="comment" maxlength="512">
     <button id="commentButton">Comment</button>
 </div>
 <h3 id="commentsTitle">Comments: </h3>
@@ -91,6 +90,45 @@
             if (comments.success) {return comments.data} else {throw "error"};
         } catch(err) {console.log(err)};
     };
+    const makeDiv = (element, type) => {
+            let div = document.createElement("div");
+            div.classList.add(type);
+            let content = document.createElement("p"); let creator = document.createElement("a"); let datetime = document.createElement("p");
+            content.classList.add("commentContent"); creator.classList.add("commentCreator"); datetime.classList.add("datetime");
+            creator.href = `/user/${element.user_id}`;
+            creator.innerText = "Commentor: " + element.display_name;
+            content.innerText = element.content;
+            const date = moment(element.datetime).fromNow();
+            datetime.innerText = "Created: " + moment(element.datetime).fromNow() + ` (${moment(element.datetime).format('MMMM Do YYYY')})`;
+            let elements;
+            if (type === "comment") {
+                let reply = document.createElement("input")
+                reply.placeholder = "Reply";
+                let replyButton = document.createElement("button");
+                replyButton.innerText = "Reply";
+                replyButton.onclick = async () => {
+                    const content = reply.value;
+                    if (!content) {return alert("error: empty comment")};
+                    const response = await fetch("/api/v1/addcomment", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        body: JSON.stringify({post: id, content, repliesTo: element.id}),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    const result = await response.json()
+                    if (result.success) {
+                        window.location.href = `/post/${id}`
+                    } else {alert("internal server error: try again later"); window.location.href = `/post/${id}`;}
+                };
+                elements = [document.createElement("hr"), creator, document.createElement("br"), content, document.createElement("br"), reply, replyButton, document.createElement("br"), datetime, document.createElement("hr")]
+            } else {
+                elements = [document.createElement("hr"), creator, document.createElement("br"), content, document.createElement("br"), datetime, document.createElement("hr")]
+            }
+            elements.forEach(element => {div.appendChild(element)});
+            return div;
+    };
     const showComments = async (l = 10, p = 1) => {
         const commentsDiv = document.querySelector("#comments");
         const comments = await getComments(l, p);
@@ -98,24 +136,14 @@
         const nextButton = document.querySelector("#nextPage");
         if (comments.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
         commentsDiv.replaceChildren();
-        comments
-        .map(element => {
-            let div = document.createElement("div");
-            div.classList.add("comment");
-            let content = document.createElement("p"); let creator = document.createElement("a"); let datetime = document.createElement("p");
-            content.classList.add("commentContent"); creator.classList.add("commentCreator"); datetime.classList.add("datetime");
-            creator.href = `/user/${element.user_id}`;
-            creator.innerText = "Commentor: " + element.display_name;
-            content.innerText = element.content;
-            date = moment(element.datetime).fromNow();
-            datetime.innerText = "Created: " + moment(element.datetime).fromNow() + ` (${moment(element.datetime).format('MMMM Do YYYY')})`;
-            let elements = [document.createElement("hr"), creator, document.createElement("br"), content, document.createElement("br"), datetime, document.createElement("hr")]
-            elements.forEach(element => {div.appendChild(element)});
+        const elements = comments.filter(element => !element.repliesTo).map(element => {
+            const div = makeDiv(element, "comment");
+            const replies = comments.filter(item => item.repliesTo === element.id).map(banana => makeDiv(banana, "reply"));
+            replies.forEach(item => div.appendChild(item));
             return div;
-        })
-        .forEach(element => {
-            commentsDiv.appendChild(element);
         });
+        elements.forEach(element => commentsDiv.appendChild(element));
+
     };
     const updatePageP = () => {
         const previousPage = document.querySelector("#previousPage");

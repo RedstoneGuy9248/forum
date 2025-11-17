@@ -133,15 +133,18 @@ router.post("/addcomment", limits.addcomment, async (req, res) => {
     if (!req.body || !req.body.post || !req.body.content) {return res.status(400).json({success: false, error: "Specify post id and comment content"});};
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     const token = req.cookies.token;
+    if (req.body.repliesTo && !parseInt(req.body.repliesTo)) {return res.status(400).json({success: false, error: "repliesTo should be Int."});}
+    let repliesTo;
+    if (parseInt(req.body.repliesTo)) {repliesTo = parseInt(req.body.repliesTo);};
     const { post, content } = req.body;
     const tokenResult = await functions.verifyToken(token);
     if (!tokenResult.success) {return res.status(tokenResult.code).json({success: false, error: tokenResult.error});};
-    const result = await functions.addComment(token, post, content);
+    const result = repliesTo ? await functions.addComment(token, post, content, repliesTo) : await functions.addComment(token, post, content);
     return res.status(result.code).json(result.success ? {success: result.success} : {success: result.success, error: result.error});
 });
 
 router.post("/addvote", limits.addvote, async (req, res) => {
-    if (!req.body || !req.body.post || !req.body.value) {return res.status(400).json({success: false, error: "Specify post id and comment content"});};
+    if (!req.body || !req.body.post || !req.body.value) {return res.status(400).json({success: false, error: "Specify post id and vote value"});};
     if (!req.cookies.token) {return res.status(401).json({success: false, error: "Unauthenticated"});};
     if (!(req.body.value == 1 || req.body.value == -1)) {return res.status(400).json({success: false, error: "vote should be 1 (up) or -1 (down)"});};
     const token = req.cookies.token;

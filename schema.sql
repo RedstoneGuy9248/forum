@@ -29,12 +29,15 @@ CREATE TABLE `comments` (
   `user_id` int(11) NOT NULL,
   `content` varchar(512) NOT NULL,
   `datetime` datetime NOT NULL DEFAULT current_timestamp(),
+  `repliesTo` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `post_id` (`post_id`),
+  UNIQUE KEY `post_id` (`post_id`,`id`),
   KEY `user_id` (`user_id`),
+  KEY `post_id_2` (`post_id`,`repliesTo`),
   CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
-  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2129 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`post_id`, `repliesTo`) REFERENCES `comments` (`post_id`, `id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2155 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,4 +126,4 @@ CREATE TABLE `votes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-11-16 18:31:44
+-- Dump completed on 2025-11-17 17:55:36

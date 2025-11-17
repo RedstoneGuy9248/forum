@@ -126,7 +126,7 @@ const getComments = async (id, limit, page) => {
     const offset = (page - 1) * (limit);
     try {
         conn = await pool.getConnection();
-        rows = await conn.query("SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? ORDER BY ID DESC LIMIT ? OFFSET ?;", [id, limit, offset]);
+        rows = await conn.query("(SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? AND repliesTo IS NULL ORDER BY ID DESC LIMIT ? OFFSET ?) UNION ALL (SELECT A.*, B.display_name FROM comments AS A JOIN users AS B ON A.user_id = B.id WHERE post_id = ? AND repliesTo IS NOT NULL) ORDER BY id DESC;", [id, limit, offset, id]);
         if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: true, code: 200, error: "No data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
@@ -140,13 +140,17 @@ const addPost = async (token, title, content) => {
         return {success: true, code: 200, id: parseInt(id[0].id)};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
-const addComment = async (token, post, content) => {
+const addComment = async (token, post, content, repliesTo) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        await conn.query("INSERT INTO comments (post_id, user_id, content) VALUES (?, (SELECT id FROM sessions WHERE token = ?), ?)", [post, token, content]);
+        if (repliesTo) {
+            await conn.query("INSERT INTO comments (post_id, user_id, content, repliesTo) VALUES (?, (SELECT id FROM sessions WHERE token = ?), ?, ?)", [post, token, content, repliesTo]);
+        } else {
+            await conn.query("INSERT INTO comments (post_id, user_id, content) VALUES (?, (SELECT id FROM sessions WHERE token = ?), ?)", [post, token, content]);
+        };
         return {success: true, code: 200};
-    } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
+    } catch(err) {if (err.code === "ER_NO_REFERENCED_ROW_2") {return {success: false, code: 400, error: "comment id not on same post as reply"};} else {console.log(err);return {success: false, code: 500, error: "Internal server error"};}} finally {if (conn) {conn.end();}};
 };
 
 const editUser = async (token, username, display_name, description) => {
