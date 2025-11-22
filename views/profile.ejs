@@ -1,7 +1,7 @@
 <div class="userInfo" id="userInfo"></div>
 <button id="editProfile" onclick="window.location.href='/profile/edit'">Edit Profile</button>
 <div class="postsList" id="posts"></div>
-<button class="pagination" onclick="previousPage()">Previous Page</button>
+<button class="pagination" id="previousPage" onclick="previousPage()">Previous Page</button>
 <button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
 <p class="pagination" id="pagep">Current Page: </p>
 <script>
@@ -63,6 +63,7 @@
     };
     const updatePageP = () => {
         pagep.innerText = "Current Page: " + p;
+        if (p <= 1) {document.querySelector("#previousPage").style.display = "none";} else {document.querySelector("#previousPage").style.display = "inline";}
     };
     const nextPage = async () => {
         const result = await showPosts(10, p + 1);

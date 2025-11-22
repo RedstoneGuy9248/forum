@@ -134,7 +134,8 @@
         const comments = await getComments(l, p);
         if (!comments) {return false};
         const nextButton = document.querySelector("#nextPage");
-        if (comments.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
+        console.log(comments.length < l)
+        if (comments.filter(element => !element.repliesTo).length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
         commentsDiv.replaceChildren();
         const elements = comments.filter(element => !element.repliesTo).map(element => {
             const div = makeDiv(element, "comment");
