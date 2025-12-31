@@ -17,7 +17,6 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/", async (req, res) => {
         const p = parseInt(req.query.p) ? parseInt(req.query.p) : 1;
         const l = parseInt(req.query.l) ? parseInt(req.query.l) : 10;
-        console.log(`${p}, ${l}`);
         result = await functions.getPosts(l, p);
         if (result.success) {
           res.render('index', {title: "Forum: Home", p, l, result: result.data});
@@ -45,8 +44,11 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/signup", (req, res) => {
         res.render('signup', {title: "Forum: Signup"});
     });
-    app.get("/post/:id", (req, res) => {
-        res.render('post', {id: req.params.id, title: `Forum: View Post`});
+    app.get("/post/:id", async (req, res) => {
+        const id = req.params.id;
+        const comments = await functions.getComments(id, 10, 1);
+        const post = await functions.getPost(id);
+        res.render('post', {id, title: `Forum: View Post`, comments, post});
     });
     app.use("/api/v1", routeApiV1);
     app.listen(5000, () => {console.log("http://localhost:5000");});
