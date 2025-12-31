@@ -24,7 +24,6 @@
 <button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
 <p class="pagination" id="pagep">Current Page: </p>
 <script>
-    console.log(buttons);
     let l = 10;
     let p = 1;
     const pagep = document.querySelector("#pagep");
@@ -73,7 +72,6 @@
     };
     const getPost = async () => {
         const response = JSON.parse(document.querySelector("#data-post").dataset.post);
-        console.log(response);
         post = response.data[0];
         title.innerText = post.title;
         postCreator.innerText = "- " + post.display_name;
@@ -134,7 +132,6 @@
         const comments = data ? data.data : await getComments(l, p);
         if (!comments) {return false};
         const nextButton = document.querySelector("#nextPage");
-        console.log(comments.length < l)
         if (comments.filter(element => !element.repliesTo).length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
         commentsDiv.replaceChildren();
         const elements = comments.filter(element => !element.repliesTo).map(element => {
