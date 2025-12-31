@@ -1,21 +1,15 @@
+<div id="data" data-posts='<%= JSON.stringify(result) %>'></div>
 <div class="postsList" id="posts"></div>
 <button class="pagination" id="previousPage" onclick="previousPage()">Previous Page</button>
 <button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
 <p class="pagination" id="pagep">Current Page: </p>
 <script>
-    let l = 10;
-    let p = 1;
+    let l = parseInt("<%= l %>");
+    let p = parseInt("<%= p %>");
     const pagep = document.querySelector("#pagep");
-    const getPosts = async (l = 10, p = 1) => {
-        try {
-            const response = await fetch(`/api/v1/posts?limit=${l}&page=${p}`);
-            const posts = await response.json();
-            if (posts.success) {return posts.data} else {throw "error"};
-        } catch(err) {console.log(err)};
-    };
     const showPosts = async (l = 10, p = 1) => {
         const postsDiv = document.querySelector("#posts");
-        const posts = await getPosts(l, p);
+        const posts = JSON.parse(document.querySelector("#data").dataset.posts);
         if (!posts) {return false};
         const nextButton = document.querySelector("#nextPage");
         if (posts.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
@@ -47,18 +41,12 @@
         if (p <= 1) {document.querySelector("#previousPage").style.display = "none";} else {document.querySelector("#previousPage").style.display = "inline";}
     };
     const nextPage = async () => {
-        const result = await showPosts(10, p + 1);
-        if (result === false) {return false};
-        p++;
-        updatePageP();
-
+        window.location.href = `/?p=${p + 1}&l=${l}`;
     };
     const previousPage = async () => {
         if (p <= 1) {return false};
-        p--;
-        await showPosts(10, p);
-        updatePageP();
+        window.location.href = `/?p=${p - 1}&l=${l}`;
     };
-    showPosts();
+    showPosts(l, p);
     updatePageP();
 </script>
