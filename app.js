@@ -32,8 +32,11 @@ const routeApiV1 = require("./routes/api/v1/routes");
         const posts = await functions.getPosts(10, 1, userInfo.data[0].username);
         res.render('profile', {title: "Forum: Profile", userInfo: userInfo.data[0], posts: posts.data});
     });
-    app.get("/profile/edit", (req, res) => {
-        res.render('profile/edit', {title: "Forum: Edit Profile"});
+    app.get("/profile/edit", async (req, res) => {
+        if (!req.cookies.token) {return res.status(401).send("Unauthorised");};
+        const userInfo = await functions.verifyToken(req.cookies.token);
+        if (!userInfo.success) {return res.status(500).send("Internal Server Error");};
+        res.render('profile/edit', {title: "Forum: Edit Profile", userInfo: userInfo.data[0]});
     });
     app.get("/new-post", (req, res) => {
         res.render('new-post', {title: "Forum: New Post"});
