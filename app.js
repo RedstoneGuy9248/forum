@@ -39,8 +39,11 @@ const routeApiV1 = require("./routes/api/v1/routes");
         res.render('new-post', {title: "Forum: New Post"});
     });
 
-    app.get("/user/:id", (req, res) => {
-        res.render('user', {id: req.params.id, title: `Forum: View User`});
+    app.get("/user/:id", async (req, res) => {
+        const id = req.params.id;
+        const userInfo = await functions.getUser(id);
+        const posts = await functions.getPosts(10, 1, id);
+        res.render('user', {id, title: `Forum: View User`, userInfo: userInfo.data[0], posts: posts.data});
     });
     app.get("/login", (req, res) => {
         res.render('login', {title: "Forum: Login"});
