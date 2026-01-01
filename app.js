@@ -25,8 +25,12 @@ const routeApiV1 = require("./routes/api/v1/routes");
             res.status(result.code).send(result.error);
         };
     });
-    app.get("/profile", (req, res) => {
-        res.render('profile', {title: "Forum: Profile"});
+    app.get("/profile", async (req, res) => {
+        if (!req.cookies.token) {return res.status(401).send("Unauthorised");};
+        const userInfo = await functions.verifyToken(req.cookies.token);
+        if (!userInfo.success) {return res.status(500).send("Internal Server Error");};
+        const posts = await functions.getPosts(10, 1, userInfo.data[0].username);
+        res.render('profile', {title: "Forum: Profile", userInfo: userInfo.data[0], posts: posts.data});
     });
     app.get("/profile/edit", (req, res) => {
         res.render('profile/edit', {title: "Forum: Edit Profile"});
