@@ -17,10 +17,9 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/", async (req, res) => {
         const p = parseInt(req.query.p) ? parseInt(req.query.p) : 1;
         const l = parseInt(req.query.l) ? parseInt(req.query.l) : 10;
-        result = await functions.getPosts(l, p);
+        const result = await functions.getPosts(l, p);
         if (result.success) {
           res.render('index', {title: "Forum: Home", p, l, result: result.data});
-          console.log(result.data);
         } else {
             res.status(result.code).send(result.error);
         };
@@ -30,6 +29,7 @@ const routeApiV1 = require("./routes/api/v1/routes");
         const userInfo = await functions.verifyToken(req.cookies.token);
         if (!userInfo.success) {return res.status(500).send("Internal Server Error");};
         const posts = await functions.getPosts(10, 1, userInfo.data[0].username);
+        if (!posts.success) {return res.status(posts.code).send(posts.error);};
         res.render('profile', {title: "Forum: Profile", userInfo: userInfo.data[0], posts: posts.data});
     });
     app.get("/profile/edit", async (req, res) => {
@@ -45,7 +45,9 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/user/:id", async (req, res) => {
         const id = req.params.id;
         const userInfo = await functions.getUser(id);
+        if (!userInfo.success) {return res.status(userInfo.code).send(userInfo.error);};
         const posts = await functions.getPosts(10, 1, id);
+        if (!posts.success) {return res.status(posts.code).send(posts.error);};
         res.render('user', {id, title: `Forum: View User`, userInfo: userInfo.data[0], posts: posts.data});
     });
     app.get("/login", (req, res) => {
@@ -57,7 +59,9 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/post/:id", async (req, res) => {
         const id = req.params.id;
         const comments = await functions.getComments(id, 10, 1);
+        if (!comments.success) {return res.status(comments.code).send(comments.error);};
         const post = await functions.getPost(id);
+        if (!post.success) {return res.status(post.code).send(post.error);};
         res.render('post', {id, title: `Forum: View Post`, comments, post});
     });
     app.use("/api/v1", routeApiV1);

@@ -70,9 +70,9 @@
             }
         });
     };
-    const getPost = async () => {
+    const getPost = () => {
         const response = JSON.parse(document.querySelector("#data-post").dataset.post);
-        post = response.data[0];
+        const post = response.data[0];
         title.innerText = post.title;
         postCreator.innerText = "- " + post.display_name;
         postCreator.href = `/user/${post.poster_id}`
@@ -136,7 +136,7 @@
         commentsDiv.replaceChildren();
         const elements = comments.filter(element => !element.repliesTo).map(element => {
             const div = makeDiv(element, "comment");
-            const replies = comments.filter(item => item.repliesTo === element.id).map(banana => makeDiv(banana, "reply"));
+            const replies = comments.filter(item => item.repliesTo === element.id).map(banana => makeDiv(banana, "reply")); //i dont remember why i named this variable banana 😭
             replies.forEach(item => div.appendChild(item));
             return div;
         });

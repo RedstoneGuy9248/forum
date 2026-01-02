@@ -1,6 +1,6 @@
 <div id="data-userinfo" data-userinfo='<%= JSON.stringify(userInfo) %>'></div>
 <div id="data-posts" data-posts='<%= JSON.stringify(posts) %>'></div>
-<div class="userinfo" id="userInfo"></div>
+<div class="userInfo" id="userInfo"></div>
 <button id="editProfile" onclick="window.location.href='/profile/edit'">Edit Profile</button>
 <div class="postsList" id="posts"></div>
 <button class="pagination" id="previousPage" onclick="previousPage()">Previous Page</button>
@@ -73,7 +73,6 @@
     };
     const main = async () => {
         const userInfo = JSON.parse(document.querySelector("#data-userinfo").dataset.userinfo);
-        console.log(userInfo);
         console.log(JSON.parse(document.querySelector("#data-posts").dataset.posts));
         showUserInfo(userInfo);
         showPosts(userInfo.id, l, p, JSON.parse(document.querySelector("#data-posts").dataset.posts));

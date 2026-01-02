@@ -16,7 +16,7 @@
     };
     const showPosts = async (l = 10, p = 1, data) => {
         const postsDiv = document.querySelector("#posts");
-        const posts = data ? data : await getPosts(l, p)
+        const posts = data ? data : await getPosts(l, p);
         if (!posts) {return false};
         const nextButton = document.querySelector("#nextPage");
         if (posts.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
