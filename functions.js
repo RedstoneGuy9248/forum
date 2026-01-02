@@ -50,7 +50,7 @@ const verifyToken = async (token) => {
         conn = await pool.getConnection();
         const query = await conn.query("SELECT A.id, A.username, A.display_name, A.description, A.datetime FROM users AS A INNER JOIN sessions AS B ON A.id = B.id WHERE B.token = ?;", [token]);
         if (query.length === 0) {return {success: false, code: 401, error: "Invalid/Expired token"};} else {return {success: true, code: 200, data: query};};
-    } catch(err) {console.log(err); return false;} finally {if (conn) {conn.end();}};
+    } catch(err) {console.log(err); return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
 
 const removeExpiredTokens = () => {
@@ -90,9 +90,10 @@ const getPost = async (id, token) => {
         } else {
             rows = await conn.query("SELECT (SELECT SUM(value) FROM votes WHERE post_id = ?) AS vote_total, A.*, B.username, B.display_name FROM posts AS A JOIN users AS B ON A.poster_id = B.id WHERE A.id = ?;", [id, id]);
         }
+        if (!rows || rows.length <= 0) {return {success: false, code: 400, error: "No data meets specifications"};};
         if (rows.length && !rows[0].vote_total) {rows[0].vote_total = 0;} else {rows[0].vote_total = parseInt(rows[0].vote_total);};
         if (rows.length && rows[0].hasOwnProperty("voted") && !rows[0].voted) {rows[0].voted = false;} else if (rows.length && rows[0].hasOwnProperty("voted")) {rows[0].voted = parseInt(rows[0].voted);};
-        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "No data meets specifications"};};
+        return {success: true, code: 200, data: rows};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
 
@@ -106,7 +107,7 @@ const getUser = async (user) => {
         } else {
             rows = await conn.query("SELECT id, username, display_name, description, datetime FROM users WHERE username = ?;", [user]);
         }
-        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 200, error: "No data meets specifications"};};
+        if (rows && rows.length > 0) {return {success: true, code: 200, data: rows};} else {return {success: false, code: 400, error: "No data meets specifications"};};
     } catch(err) {console.log(err);return {success: false, code: 500, error: "Internal server error"};} finally {if (conn) {conn.end();}};
 };
 

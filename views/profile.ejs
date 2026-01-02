@@ -1,3 +1,5 @@
+<div id="data-userinfo" data-userinfo='<%= JSON.stringify(userInfo) %>'></div>
+<div id="data-posts" data-posts='<%= JSON.stringify(posts) %>'></div>
 <div class="userInfo" id="userInfo"></div>
 <button id="editProfile" onclick="window.location.href='/profile/edit'">Edit Profile</button>
 <div class="postsList" id="posts"></div>
@@ -7,21 +9,12 @@
 <script>
     let l = 10;
     let p = 1;
+    let id;
     if (!(document.cookie.split(';').map(element => element.trim()).includes("authStatus=true"))) {window.location.href = "/login"};
     const pagep = document.querySelector("#pagep");
-    const getUserInfo = async () => {
-        try {
-            const response = await fetch(`/api/v1/verifytoken`, {
-                method: "GET",
-                credentials: "same-origin"
-            });
-            const userInfo = await response.json();
-            if (userInfo.success) {return userInfo.data[0]} else {throw "error"};
-        } catch(err) {console.log(err)};
-    };
-    const showUserInfo = async () => {
+    const showUserInfo = async (data) => {
         const userInfoDiv = document.querySelector("#userInfo");
-        const userInfo = await getUserInfo();
+        const userInfo = data;
         const displayName = document.createElement("p"); const username = document.createElement("p"); const description = document.createElement("p"); const datetime = document.createElement("p");
         displayName.classList.add("displayName"); username.classList.add("username"); description.classList.add("description"); datetime.classList.add("datetime");
         displayName.innerText = userInfo.display_name; username.innerText = "@" + userInfo.username; description.innerText = userInfo.description; datetime.innerText = "Joined: " + moment(userInfo.datetime).fromNow() + ` (${moment(userInfo.datetime).format('MMMM Do YYYY')})`;
@@ -35,9 +28,9 @@
             if (posts.success) {return posts.data} else {throw "error"};
         } catch(err) {console.log(err)};
     };
-    const showPosts = async (id, l = 10, p = 1) => {
+    const showPosts = async (id, l = 10, p = 1, data) => {
         const postsDiv = document.querySelector("#posts");
-        const posts = await getPosts(id, l, p); //make func to, for each of the posts, append a child and fill its info using the array element.
+        const posts = data ? data : await getPosts(id, l, p); //make func to, for each of the posts, append a child and fill its info using the array element.
         if (!posts) {return false};
         const nextButton = document.querySelector("#nextPage");
         if (posts.length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
@@ -66,7 +59,7 @@
         if (p <= 1) {document.querySelector("#previousPage").style.display = "none";} else {document.querySelector("#previousPage").style.display = "inline";}
     };
     const nextPage = async () => {
-        const result = await showPosts(10, p + 1);
+        const result = await showPosts(id, 10, p + 1);
         if (result === false) {return false};
         p++;
         updatePageP();
@@ -75,13 +68,14 @@
     const previousPage = async () => {
         if (p <= 1) {return false};
         p--;
-        await showPosts(10, p);
+        await showPosts(id, 10, p);
         updatePageP();
     };
     const main = async () => {
-        const userInfo = await getUserInfo();
+        const userInfo = JSON.parse(document.querySelector("#data-userinfo").dataset.userinfo);
+        id = userInfo.id;
         showUserInfo(userInfo);
-        showPosts(userInfo.id);
+        showPosts(userInfo.id, l, p, JSON.parse(document.querySelector("#data-posts").dataset.posts));
         updatePageP();
     };
     main();

@@ -1,3 +1,5 @@
+<div id="data-comments" data-comments='<%= JSON.stringify(comments) %>'></div>
+<div id="data-post" data-post='<%= JSON.stringify(post) %>'></div>
 <div class="postDetails">
     <u><h3 class="title"></h3></u>
     <a class="post-creator"></a>
@@ -22,7 +24,6 @@
 <button class="pagination" id="nextPage" onclick="nextPage()">Next Page</button>
 <p class="pagination" id="pagep">Current Page: </p>
 <script>
-    console.log(buttons);
     let l = 10;
     let p = 1;
     const pagep = document.querySelector("#pagep");
@@ -69,11 +70,9 @@
             }
         });
     };
-
-    const getPost = async () => {
-        const response = await fetch(`/api/v1/posts?id=${id}`);
-        let post = await response.json();
-        post = post.data[0];
+    const getPost = () => {
+        const response = JSON.parse(document.querySelector("#data-post").dataset.post);
+        const post = response.data[0];
         title.innerText = post.title;
         postCreator.innerText = "- " + post.display_name;
         postCreator.href = `/user/${post.poster_id}`
@@ -81,9 +80,8 @@
         postDateTime.innerText = "Created: " + moment(post.datetime).fromNow() + ` (${moment(post.datetime).format('MMMM Do YYYY')})`;
         voteCountP.innerText = "Votes: " + post.vote_total;
         if (post.voted) {hideVoteButtons(); document.querySelector("#voteStatus").innerText = (post.voted) === 1 ? "You have Upvoted!" : "You have Downvoted!"}; 
-
     };
-    const getComments = async (l = 10, p = 1) => {
+    const getComments = async (l, p) => {
         try {
             const response = await fetch(`/api/v1/comments?id=${id}&limit=${l}&page=${p}`);
             const comments = await response.json();
@@ -129,17 +127,16 @@
             elements.forEach(element => {div.appendChild(element)});
             return div;
     };
-    const showComments = async (l = 10, p = 1) => {
+    const showComments = async (l = 10, p = 1, data) => {
         const commentsDiv = document.querySelector("#comments");
-        const comments = await getComments(l, p);
+        const comments = data ? data.data : await getComments(l, p);
         if (!comments) {return false};
         const nextButton = document.querySelector("#nextPage");
-        console.log(comments.length < l)
         if (comments.filter(element => !element.repliesTo).length < l) {nextButton.style.display = "none"} else {nextButton.style.display = "inline"};
         commentsDiv.replaceChildren();
         const elements = comments.filter(element => !element.repliesTo).map(element => {
             const div = makeDiv(element, "comment");
-            const replies = comments.filter(item => item.repliesTo === element.id).map(banana => makeDiv(banana, "reply"));
+            const replies = comments.filter(item => item.repliesTo === element.id).map(banana => makeDiv(banana, "reply")); //i dont remember why i named this variable banana 😭
             replies.forEach(item => div.appendChild(item));
             return div;
         });
@@ -152,7 +149,7 @@
         if (p <= 1) {previousPage.style.display = "none"} else {previousPage.style.display = "inline"};
     };
     const nextPage = async () => {
-        const result = await showComments(10, p + 1);
+        const result = await showComments(l, p + 1);
         if (result === false) {return false};
         p++;
         updatePageP();
@@ -161,10 +158,10 @@
     const previousPage = async () => {
         if (p <= 1) {return false};
         p--;
-        await showComments(10, p);
+        await showComments(l, p);
         updatePageP();
     };
-    showComments();
+    showComments(l, p, JSON.parse(document.querySelector("#data-comments").dataset.comments));
     updatePageP();
     getPost();
 </script>
