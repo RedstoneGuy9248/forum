@@ -73,7 +73,6 @@
     };
     const main = async () => {
         const userInfo = JSON.parse(document.querySelector("#data-userinfo").dataset.userinfo);
-        console.log(JSON.parse(document.querySelector("#data-posts").dataset.posts));
         showUserInfo(userInfo);
         showPosts(userInfo.id, l, p, JSON.parse(document.querySelector("#data-posts").dataset.posts));
         updatePageP();

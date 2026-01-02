@@ -27,7 +27,7 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/profile", async (req, res) => {
         if (!req.cookies.token) {return res.status(401).send("Unauthorised");};
         const userInfo = await functions.verifyToken(req.cookies.token);
-        if (!userInfo.success) {return res.status(500).send("Internal Server Error");};
+        if (!userInfo.success) {return res.status(userInfo.code).send(userInfo.error);};
         const posts = await functions.getPosts(10, 1, userInfo.data[0].username);
         if (!posts.success) {return res.status(posts.code).send(posts.error);};
         res.render('profile', {title: "Forum: Profile", userInfo: userInfo.data[0], posts: posts.data});
@@ -35,7 +35,7 @@ const routeApiV1 = require("./routes/api/v1/routes");
     app.get("/profile/edit", async (req, res) => {
         if (!req.cookies.token) {return res.status(401).send("Unauthorised");};
         const userInfo = await functions.verifyToken(req.cookies.token);
-        if (!userInfo.success) {return res.status(500).send("Internal Server Error");};
+        if (!userInfo.success) {return res.status(userInfo.code).send(userInfo.error);};
         res.render('profile/edit', {title: "Forum: Edit Profile", userInfo: userInfo.data[0]});
     });
     app.get("/new-post", (req, res) => {
