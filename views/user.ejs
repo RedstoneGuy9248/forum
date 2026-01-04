@@ -10,7 +10,6 @@
     let l = 10;
     let p = 1;
     const id = parseInt("<%= id %>");
-    if (!(document.cookie.split(';').map(element => element.trim()).includes("authStatus=true"))) {window.location.href = "/login"};
     const pagep = document.querySelector("#pagep");
     const showUserInfo = async (data) => {
         const userInfoDiv = document.querySelector("#userInfo");
