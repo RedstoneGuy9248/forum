@@ -60,7 +60,7 @@ const routeApiV1 = require("./routes/api/v1/routes");
         const id = req.params.id;
         const comments = await functions.getComments(id, 10, 1);
         if (!comments.success) {return res.status(comments.code).send(comments.error);};
-        const post = await functions.getPost(id);
+        const post = await functions.getPost(id, req.cookies.token ? req.cookies.token : null);
         if (!post.success) {return res.status(post.code).send(post.error);};
         res.render('post', {id, title: `Forum: View Post`, comments, post});
     });
